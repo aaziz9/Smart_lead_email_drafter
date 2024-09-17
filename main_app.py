@@ -4,11 +4,17 @@ import secrets
 import requests
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+
 from authlib.integrations.starlette_client import OAuth
+
 from starlette.config import Config
 from starlette.middleware.sessions import SessionMiddleware
+
+from services.text_bison_service import get_processed_text_by_text_bison
 
 
 # Load all the entries from .env file as environment variables
@@ -29,6 +35,9 @@ app = FastAPI()
 
 # Add session middleware to manage user sessions
 app.add_middleware(SessionMiddleware, secret_key=config('SECRET_KEY'))
+
+# Mount the static files directory
+app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 
 # OAuth setup. Can be used to get an access token from GCP.
 # Access token can then be used as an authorization bearer token with requests.
@@ -58,7 +67,7 @@ oauth.register(
 
 @app.get("/")
 async def homepage():
-    return {"message": "Welcome to the FastAPI OAuth2 example. Visit /login to authenticate."}
+    return FileResponse("static/index.html")
 
 
 @app.get("/login")
@@ -96,7 +105,8 @@ async def auth(request: Request):
     # Store the access token in sessions dict for later use
     request.session['token'] = token
 
-    return JSONResponse({"user": user, "token": token})
+    # return JSONResponse({"user": user, "token": token})
+    return RedirectResponse(url="/")
 
 
 @app.get("/refresh_token")
@@ -146,10 +156,10 @@ async def logout(request: Request):
     return JSONResponse({"message": "Logged out successfully"})
 
 
-@app.get("/get_processed_text")
+@app.post("/get_processed_text")
 async def get_processed_text(request: Request):
     """
-    Your custom API endpoint to fetch results from GCP for any allowed GCP service
+    Your custom API endpoint to fetch results from GCP for any allowed GCP services
     :param request:
     :return:
     """
@@ -157,7 +167,19 @@ async def get_processed_text(request: Request):
     if not token:
         return JSONResponse({"error": "Token not found in session"}, status_code=400)
     else:
-        return JSONResponse({"msg": "Token found in session"}, status_code=200)
+        # Read the raw JSON body
+        try:
+            body: dict = await request.json()  # Parse the incoming request body as JSON
+        except Exception:
+            raise HTTPException(status_code=400, detail="Invalid JSON body")
+
+        # Process the JSON data as needed
+        # Example: Accessing data from the body
+        processed_text = get_processed_text_by_text_bison(input_text=body["email_body"],
+                                                          action=body["action"],
+                                                          auth_token=token["access_token"])["result"]
+
+        return JSONResponse({"response_msg": processed_text}, status_code=200)
 
 
 if __name__ == "__main__":
