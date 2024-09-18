@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  email-drafter-api:
+    build:
+      context: .
+    image: sl-email-drafter:0.0.1
+    ports:
+      - "80:80"
+    restart: on-failure
