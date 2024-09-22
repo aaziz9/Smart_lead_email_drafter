@@ -11,7 +11,7 @@ def get_processed_text_by_text_bison(input_text, action, auth_token):
     if action == "Omantel Key Account Manager":
         action_description = "Rephrase the email in a formal tone, suitable for an Omantel Key Account Manager. Use telecom industry-specific terms where appropriate."
     else:
-        action_description = f'Rephrase the email content above, based on the following description: "{action}"'
+        action_description = f'Rephrase the content above, and give me an email based on the following description: "{action}"'
 
     payload: dict = {
         "instances": [
