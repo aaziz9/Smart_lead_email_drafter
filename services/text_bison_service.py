@@ -6,12 +6,19 @@ GCP_TEXT_BISON_MODEL_URL = "https://us-central1-aiplatform.googleapis.com/v1/pro
 
 def get_processed_text_by_text_bison(input_text, action, auth_token):
     response_msg: dict = {"status": None, "err_msg": None, "result": None}
+    
+    # Custom handling for "Omantel Key Account Manager"
+    if action == "Omantel Key Account Manager":
+        action_description = "Rephrase the email in a formal tone, suitable for an Omantel Key Account Manager. Use telecom industry-specific terms where appropriate."
+    else:
+        action_description = f'Rephrase the email content above, based on the following description: "{action}"'
+
     payload: dict = {
         "instances": [
             {
                 "prompt": "\n".join([
                     input_text,
-                    f'Rephrase the email content above, based on the following description: "{action}"'
+                    action_description
                 ])
             }
         ],

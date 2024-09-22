@@ -26,7 +26,7 @@ load_dotenv()
 config_data = {
     'GOOGLE_CLIENT_ID': os.getenv('GOOGLE_CLIENT_ID'),
     'GOOGLE_CLIENT_SECRET': os.getenv('GOOGLE_CLIENT_SECRET'),
-    'REDIRECT_URI': 'http://localhost/auth',
+    'REDIRECT_URI': 'http://localhost:8080/auth',
     'SECRET_KEY':  secrets.token_hex(32)  # This is for session management
 }
 config = Config(environ=config_data)
@@ -184,4 +184,5 @@ async def get_processed_text(request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=80)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
+
