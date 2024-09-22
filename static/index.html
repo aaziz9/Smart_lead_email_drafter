@@ -52,7 +52,7 @@
                 <div class="collapse navbar-collapse justify-content-end">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="http://localhost/login">Login</a>
+                            <button class="nav-link" onclick="login()">Login</button>
                         </li>
                     </ul>
                 </div>
@@ -77,13 +77,14 @@
                     <div class="action-box" onclick="toggleAction(this)">Formal</div>
                     <div class="action-box" onclick="toggleAction(this)">Aggressive</div>
                     <div class="action-box" onclick="toggleAction(this)">Sad</div>
+                    <div class="action-box" onclick="toggleAction(this)">Key account manager from Omantel, Muscat</div>
                 </div>
             </div>
 
             <!-- Custom Action Input -->
-            <div class="mb-3">
-                <label for="customAction" class="form-label">Custom Action</label>
+            <div class="mb-3 d-flex">
                 <input type="text" class="form-control output-box" id="customAction" placeholder="Type your custom action here...">
+                <button class="btn btn-custom ms-2" onclick="addCustomAction()">Add</button>
             </div>
 
             <!-- Process Button -->
@@ -97,6 +98,14 @@
         </div>
 
         <script>
+            let hostName = "localhost"
+            let port = 80
+            let serverUrl = `http://${hostName}:${port}`
+
+            function login() {
+                window.location.href = `${serverUrl}/login`;
+            }
+            
             function updateCharCount() {
                 const charCount = document.getElementById('emailBody').value.length;
                 document.getElementById('charCount').innerText = `${charCount} characters`;
@@ -120,7 +129,7 @@
                     custom_action: customAction
                 };
 
-                fetch('http://localhost/get_processed_text', {
+                fetch(`${serverUrl}/get_processed_text`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -135,6 +144,19 @@
                     console.error('Error:', error);
                     document.getElementById('outputText').value = 'Error: Unable to process request';
                 });
+            }
+
+            function addCustomAction() {
+                const customActionValue = document.getElementById('customAction').value;
+                if (customActionValue.trim()) {
+                    const actionButtonsContainer = document.getElementById('actionButtons');
+                    const newActionBox = document.createElement('div');
+                    newActionBox.classList.add('action-box');
+                    newActionBox.innerText = customActionValue;
+                    newActionBox.onclick = function() { toggleAction(newActionBox); };
+                    actionButtonsContainer.appendChild(newActionBox);
+                    document.getElementById('customAction').value = ''; // Clear input
+                }
             }
         </script>
     </body>
