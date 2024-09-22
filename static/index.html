@@ -52,7 +52,7 @@
                 <div class="collapse navbar-collapse justify-content-end">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="http://localhost/login">Login</a>
+                            <button class="nav-link" onclick="login()">Login</button>
                         </li>
                     </ul>
                 </div>
@@ -102,6 +102,10 @@
             let port = 80
             let serverUrl = `http://${hostName}:${port}`
 
+            function login() {
+                window.location.href = `${serverUrl}/login`;
+            }
+            
             function updateCharCount() {
                 const charCount = document.getElementById('emailBody').value.length;
                 document.getElementById('charCount').innerText = `${charCount} characters`;
