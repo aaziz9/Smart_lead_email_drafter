@@ -11,7 +11,7 @@ def get_processed_text_by_text_bison(input_text, action, auth_token):
             {
                 "prompt": "\n".join([
                     input_text,
-                    f'Rephrase the email content above, based on the following description: "{action}"'
+                    f'Rephrase the content above, and give me an email based on the following description: "{action}"'
                 ])
             }
         ],
