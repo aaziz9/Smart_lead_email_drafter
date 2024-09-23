@@ -16,6 +16,9 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from services.text_bison_service import get_processed_text_by_text_bison
 
+from db_utils.database_init import Base, engine
+from models import user_model, email_model, email_recipient_model
+
 
 # Load all the entries from .env file as environment variables
 # The .env file should have the values for GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET
@@ -38,6 +41,9 @@ app.add_middleware(SessionMiddleware, secret_key=config('SECRET_KEY'))
 
 # Mount the static files directory
 app.mount("/static", StaticFiles(directory="static", html=True), name="static")
+
+# Create all tables in the database
+Base.metadata.create_all(bind=engine)
 
 # OAuth setup. Can be used to get an access token from GCP.
 # Access token can then be used as an authorization bearer token with requests.
