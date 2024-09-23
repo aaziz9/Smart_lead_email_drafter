@@ -1,163 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Discord-Themed UI</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            body {
-                background-color: #36393f;
-                color: #ffffff;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            }
-            .navbar {
-                background-color: #2f3136;
-            }
-            .navbar-brand, .navbar-nav .nav-link {
-                color: #ffffff;
-            }
-            .btn-custom {
-                background-color: #7289da;
-                color: #ffffff;
-            }
-            .btn-custom:hover {
-                background-color: #677bc4;
-            }
-            .action-box {
-                background-color: #40444b;
-                color: #ffffff;
-                cursor: pointer;
-                padding: 10px;
-                border-radius: 5px;
-                margin-right: 10px;
-            }
-            .action-box.active {
-                background-color: #7289da;
-            }
-            .output-box {
-                background-color: #2f3136;
-                color: #ffffff;
-                border: 1px solid #40444b;
-            }
-        </style>
-    </head>
-    <body>
-
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Discord-Themed UI</a>
-                <div class="collapse navbar-collapse justify-content-end">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <button class="nav-link" onclick="login()">Login</button>
-                        </li>
-                    </ul>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>-Email drafter </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Updated theme colors */
+        body {
+            background-color: #ffffff; /* Ensure white background */
+            color: #000000; /* Black text */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background-color: #f7f7f7; /* Light gray navbar */
+            border-bottom: 2px solid #ff6900; /* Orange bottom border */
+        }
+        .navbar-brand, .navbar-nav .nav-link {
+            color: #000000; /* Black text for nav items */
+        }
+        .navbar-brand {
+            font-weight: bold; /* Bold brand name */
+        }
+        .btn-custom {
+            background-color: #ff6900; /* Orange button background */
+            color: #ffffff; /* White text */
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            width: 100px;
+            text-align: center;
+            margin: 0 5px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .btn-custom:hover {
+            background-color: #e65a00; /* Darker orange on hover */
+        }
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-nav .nav-item {
+            display: flex;
+            align-items: center;
+        }
+        .action-box {
+            background-color: #f7f7f7; /* Light gray for action box */
+            color: #000000; /* Black text */
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            margin-right: 10px;
+            border: 1px solid #ff6900; /* Orange border */
+        }
+        .action-box.active {
+            background-color: #ff6900; /* Orange background when active */
+            color: #ffffff; /* White text */
+        }
+        .output-box {
+            background-color: #f7f7f7; /* Light gray for output box */
+            color: #000000; /* Black text */
+            border: 1px solid #ff6900; /* Orange border */
+            border-radius: 5px;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-danger {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+        /* Spinner Styles */
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+                <span class="ms-2">AI SMART LEAD </span>
+            </a>
+            <div class="navbar-nav" id="nav-buttons">
+                <div class="nav-item d-flex align-items-center">
+                    <a class="nav-link p-0 m-0" href="http://localhost/login">
+                        <button class="btn btn-custom" id="login-button">Login</button>
+                    </a>
+                    <button id="logout-button" class="btn btn-custom" style="display: none;">Logout</button>
+                    <span id="welcome-message" style="display: none; margin-left: 15px; color: #ff6900;">Welcome, User!</span>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <!-- Main Container -->
-        <div class="container mt-4">
-            <!-- Email Body Input -->
-            <div class="mb-3">
-                <label for="emailBody" class="form-label">Email Body</label>
-                <textarea class="form-control output-box" id="emailBody" rows="6" placeholder="Type your email content here..." oninput="updateCharCount()"></textarea>
-                <div class="text-end mt-1">
-                    <small id="charCount">0 characters</small>
-                </div>
-            </div>
+    <!-- Main Container -->
+    <div class="container mt-4">
+        <!-- Error Message Container -->
+        <div id="error-message" class="alert alert-danger" style="display: none;"></div>
 
-            <!-- Action Buttons -->
-            <div class="mb-3">
-                <div id="actionButtons" class="d-flex">
-                    <div class="action-box" onclick="toggleAction(this)">Summarize</div>
-                    <div class="action-box" onclick="toggleAction(this)">Formal</div>
-                    <div class="action-box" onclick="toggleAction(this)">Aggressive</div>
-                    <div class="action-box" onclick="toggleAction(this)">Sad</div>
-                    <div class="action-box" onclick="toggleAction(this)">Key account manager from Omantel, Muscat</div>
-                </div>
-            </div>
-
-            <!-- Custom Action Input -->
-            <div class="mb-3 d-flex">
-                <input type="text" class="form-control output-box" id="customAction" placeholder="Type your custom action here...">
-                <button class="btn btn-custom ms-2" onclick="addCustomAction()">Add</button>
-            </div>
-
-            <!-- Process Button -->
-            <button class="btn btn-custom" onclick="processRequest()">Process</button>
-
-            <!-- Output Text Box -->
-            <div class="mt-3">
-                <label for="outputText" class="form-label">Output</label>
-                <textarea class="form-control output-box" id="outputText" rows="6" placeholder="Output will appear here..." readonly></textarea>
+        <!-- Email Body Input -->
+        <div class="mb-3">
+            <label for="emailBody" class="form-label">Email Body</label>
+            <textarea class="form-control output-box" id="emailBody" rows="6" placeholder="Type your email content here..." oninput="updateCharCount()"></textarea>
+            <div class="text-end mt-1">
+                <small id="charCount">0 characters</small>
             </div>
         </div>
 
-        <script>
-            let hostName = "localhost"
-            let port = 80
-            let serverUrl = `http://${hostName}:${port}`
+        <!-- Action Buttons -->
+        <div class="mb-3">
+            <div id="actionButtons" class="d-flex">
+                <div class="action-box" onclick="toggleAction(this)">Summarize</div>
+                <div class="action-box" onclick="toggleAction(this)">Formal</div>
+                <div class="action-box" onclick="toggleAction(this)">Aggressive</div>
+                <div class="action-box" onclick="toggleAction(this)">Sad</div>
+                <div class="action-box" onclick="toggleAction(this)">Key Account Manager</div>
+            </div>
+        </div>
 
-            function login() {
-                window.location.href = `${serverUrl}/login`;
-            }
-            
-            function updateCharCount() {
-                const charCount = document.getElementById('emailBody').value.length;
-                document.getElementById('charCount').innerText = `${charCount} characters`;
-            }
+        <!-- Custom Action Input -->
+        <div class="mb-3">
+            <label for="customAction" class="form-label">Custom Action</label>
+            <input type="text" class="form-control output-box" id="customAction" placeholder="Type your custom action here...">
+        </div>
 
-            function toggleAction(element) {
-                const actionBoxes = document.querySelectorAll('.action-box');
-                actionBoxes.forEach(box => box.classList.remove('active'));
-                element.classList.add('active');
-            }
+        <!-- Process Button -->
+        <button id="process-button" class="btn btn-custom" onclick="processRequest()">Process</button>
 
-            function processRequest() {
-                const emailBody = document.getElementById('emailBody').value;
-                const selectedAction = document.querySelector('.action-box.active')?.innerText || '';
-                const customAction = document.getElementById('customAction').value;
-                const prompt = `${customAction ? customAction + ' ' : ''}${selectedAction ? selectedAction + ' ' : ''}${emailBody}`;
+        <!-- Small Error Message Container -->
+        <div id="login-error-message" style="color: red; display: none; margin-top: 10px;">
+            You need to be logged in to process an email.
+        </div>
 
-                const payload = {
-                    email_body: emailBody,
-                    action: selectedAction,
-                    custom_action: customAction
-                };
+        <!-- Spinner for loading indicator -->
+        <div id="spinner" class="spinner-border text-warning" role="status" style="display: none; margin-top: 10px;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
 
-                fetch(`${serverUrl}/get_processed_text`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('outputText').value = data["response_msg"];
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('outputText').value = 'Error: Unable to process request';
-                });
-            }
+        <!-- Output Text Box -->
+        <div class="mt-3">
+            <label for="outputText" class="form-label">Output</label>
+            <textarea class="form-control output-box" id="outputText" rows="6" placeholder="Output will appear here..." readonly></textarea>
+        </div>
+    </div>
 
-            function addCustomAction() {
-                const customActionValue = document.getElementById('customAction').value;
-                if (customActionValue.trim()) {
-                    const actionButtonsContainer = document.getElementById('actionButtons');
-                    const newActionBox = document.createElement('div');
-                    newActionBox.classList.add('action-box');
-                    newActionBox.innerText = customActionValue;
-                    newActionBox.onclick = function() { toggleAction(newActionBox); };
-                    actionButtonsContainer.appendChild(newActionBox);
-                    document.getElementById('customAction').value = ''; // Clear input
+    <script>
+        // Check login status and update the UI accordingly
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/login_status', { method: 'GET' });
+                const data = await response.json();
+                if (data.logged_in) {
+                    document.getElementById('login-button').style.display = 'none';
+                    document.getElementById('logout-button').style.display = 'inline-block';
+                    document.getElementById('welcome-message').style.display = 'inline-block';
+                    document.getElementById('welcome-message').innerText = `Welcome, ${data.user_info.name || 'User'}!`;
+                } else {
+                    document.getElementById('login-button').style.display = 'inline-block';
+                    document.getElementById('logout-button').style.display = 'none';
+                    document.getElementById('welcome-message').style.display = 'none';
                 }
+            } catch (error) {
+                console.error("Error checking login status:", error);
             }
-        </script>
-    </body>
+        }
+
+        function updateCharCount() {
+            const charCount = document.getElementById('emailBody').value.length;
+            document.getElementById('charCount').innerText = `${charCount} characters`;
+        }
+
+        function toggleAction(element) {
+            const actionBoxes = document.querySelectorAll('.action-box');
+            actionBoxes.forEach(box => box.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        async function processRequest() {
+            // Check if the user is logged in
+            const loginStatusResponse = await fetch('/login_status', { method: 'GET' });
+            const loginStatus = await loginStatusResponse.json();
+
+            if (!loginStatus.logged_in) {
+                // Show the error message if the user is not logged in
+                document.getElementById('login-error-message').style.display = 'block';
+                return;
+            }
+
+            // If logged in, proceed with processing the request
+            document.getElementById('login-error-message').style.display = 'none'; // Hide the error message if logged in
+
+            const emailBody = document.getElementById('emailBody').value;
+            const selectedAction = document.querySelector('.action-box.active')?.innerText || '';
+            const customAction = document.getElementById('customAction').value;
+
+            const payload = {
+                email_body: emailBody,
+                action: selectedAction || customAction
+            };
+
+            // Show spinner and disable process button
+            document.getElementById('spinner').style.display = 'block';
+            document.getElementById('process-button').disabled = true;
+
+            fetch('http://localhost/get_processed_text', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.statusText); // Handle HTTP errors
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('error-message').innerText = `Error: ${data.error}`;
+                    document.getElementById('error-message').style.display = 'block'; // Show error message
+                    document.getElementById('outputText').value = '';
+                } else {
+                    document.getElementById('outputText').value = data["response_msg"];
+                    document.getElementById('error-message').style.display = 'none'; // Hide error message if successful
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('error-message').innerText = `Error: Unable to process request (${error.message})`;
+                document.getElementById('error-message').style.display = 'block'; // Show error message
+                document.getElementById('outputText').value = '';
+            })
+            .finally(() => {
+                // Hide spinner and enable process button
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('process-button').disabled = false;
+            });
+        }
+
+        // Logout functionality script
+        document.getElementById('logout-button').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/logout', { method: 'GET' });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message); // Show a message on successful logout
+                    window.location.href = "/"; // Redirect to the homepage or login page
+                } else {
+                    throw new Error(data.detail || "Logout failed");
+                }
+            } catch (error) {
+                console.error("Logout failed:", error.message);
+                alert("An error occurred: " + error.message);
+            }
+        });
+
+        // Check login status on page load
+        checkLoginStatus();
+    </script>
+</body>
 </html>
