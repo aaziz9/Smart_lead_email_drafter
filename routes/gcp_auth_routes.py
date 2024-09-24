@@ -140,3 +140,12 @@ async def logout(request: Request):
     # Clear the session data
     request.session.clear()
     return JSONResponse({"message": "Logged out successfully"})
+
+
+# Check if the user is logged in
+@gcp_router.get("/login_status")
+async def login_status(request: Request):
+    token = request.session.get('token')
+    if not token:
+        return JSONResponse({"logged_in": False})
+    return JSONResponse({"logged_in": True, "user_info": request.session.get('user', {})})

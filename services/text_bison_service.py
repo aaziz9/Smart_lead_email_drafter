@@ -1,9 +1,10 @@
 import requests
 
-
+# Base URL for GCP Text Bison model
 GCP_TEXT_BISON_MODEL_URL = "https://us-central1-aiplatform.googleapis.com/v1/projects/genz-aismartlead-project/locations/us-central1/publishers/google/models/text-bison:predict"
 
 
+# Function to process text with different actions using Text Bison
 def get_processed_text_by_text_bison(input_text, action, auth_token):
     response_msg: dict = {"status": None, "err_msg": None, "result": None}
     
@@ -29,19 +30,26 @@ def get_processed_text_by_text_bison(input_text, action, auth_token):
             "topP": 0.95
         }
     }
-    headers: dict = {
+
+    headers = {
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json'
     }
 
-    response = requests.post(url=GCP_TEXT_BISON_MODEL_URL, headers=headers, json=payload)
-    response_msg["status"] = response.status_code
+    try:
+        # Make the request to the GCP Text Bison model
+        response = requests.post(url=GCP_TEXT_BISON_MODEL_URL, headers=headers, json=payload)
+        response_msg["status"] = response.status_code
 
-    if response.status_code != 200:
-        response_msg["err_msg"] = response.text
-    else:
-        response_dict: dict = response.json()
-        response_msg["result"] = " ".join([prediction["content"] for prediction in response_dict["predictions"]])
+        if response.status_code != 200:
+            response_msg["err_msg"] = response.text
+        else:
+            response_dict = response.json()
+            response_msg["result"] = " ".join([prediction["content"] for prediction in response_dict["predictions"]])
+
+    except requests.exceptions.RequestException as e:
+        response_msg["err_msg"] = f"Request failed: {str(e)}"
+        response_msg["status"] = 500
 
     return response_msg
 
