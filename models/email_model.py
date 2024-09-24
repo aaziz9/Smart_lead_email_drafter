@@ -21,7 +21,7 @@ class Email(Base):
     # Relationship to the sender
     sender = relationship("User", back_populates="sent_emails")
 
-    thread = relationship("EmailThread", back_populates="related_thread")
+    thread = relationship("EmailThread", back_populates="emails")
 
     # Relationship to recipients (many-to-many through EmailRecipient)
     recipients = relationship("EmailRecipient", back_populates="email")

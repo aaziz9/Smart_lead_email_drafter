@@ -43,8 +43,9 @@ if __name__ == "__main__":
         db.add_all([user1, user2, user3, user4, user5, user6])
         db.commit()
 
-        email_thread = email_thread_model.EmailThread(title="Partnership Opportunities with Omantel")
-        db.add(email_thread)
+        email_thread1 = email_thread_model.EmailThread(title="Partnership Opportunities with Omantel")
+        email_thread2 = email_thread_model.EmailThread(title="iPhone sales revenue")
+        db.add_all([email_thread1, email_thread2])
         db.commit()
 
         # Insert dummy emails

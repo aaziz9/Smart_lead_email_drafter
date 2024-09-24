@@ -9,4 +9,4 @@ class EmailThread(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
 
-    related_thread = relationship("Email", back_populates="thread")
+    emails = relationship("Email", back_populates="thread")
