@@ -10,7 +10,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from db_utils.database_init import Base, engine
 
-from models import user_model, email_model, email_recipient_model
+from models import user_model, email_thread_model, email_model, email_recipient_model
 
 
 app = FastAPI()

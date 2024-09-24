@@ -26,7 +26,7 @@ def get_db():
 
 
 if __name__ == "__main__":
-    from models import user_model, email_model, email_recipient_model
+    from models import user_model, email_thread_model, email_model, email_recipient_model
 
     # TODO: Correct DATABASE_URL path in case this function is called
     db = SessionLocal()
@@ -41,6 +41,10 @@ if __name__ == "__main__":
         user6 = user_model.User(name="Mohammad", email="mohammad.alawati@oreedo.com")
 
         db.add_all([user1, user2, user3, user4, user5, user6])
+        db.commit()
+
+        email_thread = email_thread_model.EmailThread(title="Partnership Opportunities with Omantel")
+        db.add(email_thread)
         db.commit()
 
         # Insert dummy emails
@@ -59,7 +63,8 @@ if __name__ == "__main__":
                                    +968 1234 5678
                                    ahmed.almansoori@omantel.om
                                    """,
-                                   sender_id=1)
+                                   sender_id=1,
+                                   thread_id=1)
         email2 = email_model.Email(subject="Re: Partnership Opportunities with Omantel",
                                    body="""
                                    Dear Ahmed,
@@ -71,7 +76,8 @@ if __name__ == "__main__":
                                    Operations Manager
                                    Tech Solutions Inc.
                                    """,
-                                   sender_id=3)
+                                   sender_id=3,
+                                   thread_id=1)
         email3 = email_model.Email(subject="Re: Partnership Opportunities with Omantel",
                                    body=
                                    """
@@ -83,7 +89,8 @@ if __name__ == "__main__":
                                    Ahmed Al-Mansoori
                                    Key Account Manager, Omantel
                                    """,
-                                   sender_id=1)
+                                   sender_id=1,
+                                   thread_id=1)
         email4 = email_model.Email(subject="Re: Partnership Opportunities with Omantel",
                                    body="""
                                    Dear Ahmed,
@@ -99,7 +106,8 @@ if __name__ == "__main__":
                                    Best,
                                    Maryam Al-Mamari
                                    """,
-                                   sender_id=3)
+                                   sender_id=3,
+                                   thread_id=1)
         email5 = email_model.Email(subject="Follow-Up on Our Recent Discussion",
                                    body="""
                                    Dear Maryam,
@@ -111,7 +119,8 @@ if __name__ == "__main__":
                                    Ahmed Al-Mansoori
                                    Key Account Manager, Omantel
                                    """,
-                                   sender_id=1)
+                                   sender_id=1,
+                                   thread_id=1)
 
         db.add_all([email1, email2, email3, email4, email5])
         db.commit()
