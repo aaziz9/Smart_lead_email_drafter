@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta Tags and Title -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,82 +37,10 @@
             border-radius: 5px;
             padding: 8px 16px;
             cursor: pointer;
-            width: 100px;
-            text-align: center;
-            margin: 0 5px;
-            display: inline-block;
-            vertical-align: middle;
         }
 
         .btn-custom:hover {
             background-color: #e65a00;
-        }
-
-        .navbar-nav {
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar-nav .nav-item {
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: #ff6900; /* Change the color to orange on hover */
-        }
-
-        .action-box {
-            background-color: #f7f7f7;
-            color: #000000;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 5px;
-            margin-right: 10px;
-            border: 1px solid #ff6900;
-        }
-
-        .action-box.active {
-            background-color: #ff6900;
-            color: #ffffff;
-        }
-
-        .output-box {
-            background-color: #f7f7f7;
-            color: #000000;
-            border: 1px solid #ff6900;
-            border-radius: 5px;
-        }
-
-        .alert {
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-        }
-
-        .alert-danger {
-            color: #a94442;
-            background-color: #f2dede;
-            border-color: #ebccd1;
-        }
-
-        .spinner-border {
-            width: 3rem;
-            height: 3rem;
-            border-width: 5px;
-        }
-
-        /* Scrollbar for Email Body Textarea */
-        #emailBody {
-            height: 200px;
-            overflow-y: auto;
-        }
-
-        /* Scrollbar for Output Textarea */
-        #outputText {
-            height: 200px;
-            overflow-y: auto;
         }
 
         .email-card {
@@ -140,17 +69,24 @@
             -webkit-line-clamp: unset;
         }
 
-        .truncate {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-        }
-
         .email-recipients {
             font-style: italic;
             color: #555;
             margin-top: 5px;
+        }
+
+        #response-textarea {
+            width: 100%;
+            height: 200px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: none;
+        }
+
+        #spinner {
+            display: none;
         }
 
         .login-alert {
@@ -162,9 +98,9 @@
             text-align: center;
             margin-top: 20px;
         }
-
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light">
@@ -173,16 +109,13 @@
             <div class="d-flex align-items-center">
                 <a class="navbar-brand d-flex align-items-center" href="#">
                     <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+
                     <span class="ms-2">AI SMART LEAD</span>
                 </a>
                 <!-- Navigation Links -->
                 <div class="navbar-nav ms-3">
-                    <div class="nav-item">
-                        <a class="nav-link" href="/">Email Drafter</a>
-                    </div>
-                    <div class="nav-item">
-                        <a class="nav-link" href="/ContextMail">Context Mail</a>
-                    </div>
+                    <a class="nav-link" href="/">Email Drafter</a>
+                    <a class="nav-link" href="/ContextMail">Context Mail</a>
                 </div>
             </div>
             <!-- Right Side: Login/Logout Buttons -->
@@ -203,7 +136,7 @@
         You need to log in to view and access the emails. Please log in first.
     </div>
     <!-- Email Section -->
-    <div class="container mt-4" id="email-section" style="display: none;"> <!-- Hidden by default -->
+    <div class="container mt-4" id="email-section" style="display: none;">
         <h2>Select Email Thread</h2>
         <div class="mb-3">
             <select class="form-select" id="email-thread-dropdown">
@@ -214,17 +147,35 @@
         <div id="email-preview" class="preview-container mt-4">
             <!-- Emails will be shown here as cards -->
         </div>
+
+        <button id="generate-context" class="btn btn-custom mt-3">Generate Context</button>
+        <button id="regenerate-context" class="btn btn-custom mt-3" style="display: none;">Re-generate Context</button>
+
+        <!-- Spinner -->
+        <div id="spinner" class="mt-3">
+            <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Text area for displaying response -->
+        <textarea id="response-textarea" placeholder="The generated context will appear here..." disabled></textarea>
     </div>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- JavaScript to handle dropdown actions and fetch requests -->
+    <!-- JavaScript to handle dropdown actions, fetch requests, and context generation -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const emailThreadDropdown = document.getElementById('email-thread-dropdown');
             const emailPreview = document.getElementById('email-preview');
+            const generateContextButton = document.getElementById('generate-context');
+            const regenerateContextButton = document.getElementById('regenerate-context');
+            const spinner = document.getElementById('spinner');
+            const responseTextarea = document.getElementById('response-textarea');
+            let selectedThreadId = null;
 
             // Fetch the email threads when the dropdown is clicked
             emailThreadDropdown.addEventListener('click', function () {
@@ -245,7 +196,7 @@
 
             // Handle selection of email thread
             emailThreadDropdown.addEventListener('change', function () {
-                const selectedThreadId = emailThreadDropdown.value;
+                selectedThreadId = emailThreadDropdown.value;
                 const apiUrl = `http://localhost/context_mail/v1/email_threads/${selectedThreadId}/emails`;
 
                 // Fetch emails for the selected thread
@@ -293,114 +244,63 @@
                     })
                     .catch(error => console.error('Error fetching emails:', error));
             });
+
+            // Function to generate context
+            function generateContext() {
+                if (!selectedThreadId) {
+                    alert('Please select an email thread first!');
+                    return;
+                }
+
+                const contextApiUrl = `http://localhost/text_bison/v1/context_generator/${selectedThreadId}`;
+                responseTextarea.value = ''; // Clear previous response
+                spinner.style.display = 'block'; // Show spinner
+
+                // Fetch the generated context
+                fetch(contextApiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        spinner.style.display = 'none'; // Hide spinner
+                        responseTextarea.value = data.response_msg; // Display the response message
+                        regenerateContextButton.style.display = 'inline-block'; // Show re-generate button
+                    })
+                    .catch(error => {
+                        spinner.style.display = 'none'; // Hide spinner
+                        console.error('Error generating context:', error);
+                    });
+            }
+
+            // Bind the generate and re-generate buttons
+            generateContextButton.addEventListener('click', generateContext);
+            regenerateContextButton.addEventListener('click', generateContext);
+
+            // Check login status and update the UI accordingly
+            async function checkLoginStatus() {
+                try {
+                    const response = await fetch('/login_status', { method: 'GET' });
+                    const data = await response.json();
+                    if (data.logged_in) {
+                        document.getElementById('login-button').style.display = 'none';
+                        document.getElementById('logout-button').style.display = 'inline-block';
+                        document.getElementById('welcome-message').style.display = 'inline-block';
+                        document.getElementById('welcome-message').innerText = `Welcome, ${data.user_info.name || 'User'}!`;
+                        document.getElementById('email-section').style.display = 'block'; // Show email section if logged in
+                        document.getElementById('login-alert').style.display = 'none'; // Hide login alert
+                    } else {
+                        document.getElementById('login-button').style.display = 'inline-block';
+                        document.getElementById('logout-button').style.display = 'none';
+                        document.getElementById('welcome-message').style.display = 'none';
+                        document.getElementById('email-section').style.display = 'none'; // Hide email section if not logged in
+                        document.getElementById('login-alert').style.display = 'block'; // Show login alert
+                    }
+                } catch (error) {
+                    console.error("Error checking login status:", error);
+                }
+            }
+
+            // Check login status on page load
+            checkLoginStatus();
         });
-
-        // Check login status and update the UI accordingly
-        async function checkLoginStatus() {
-            try {
-                const response = await fetch('/login_status', { method: 'GET' });
-                const data = await response.json();
-                if (data.logged_in) {
-                    document.getElementById('login-button').style.display = 'none';
-                    document.getElementById('logout-button').style.display = 'inline-block';
-                    document.getElementById('welcome-message').style.display = 'inline-block';
-                    document.getElementById('welcome-message').innerText = `Welcome, ${data.user_info.name || 'User'}!`;
-                    document.getElementById('email-section').style.display = 'block'; // Show email section if logged in
-                    document.getElementById('login-alert').style.display = 'none'; // Hide login alert
-                } else {
-                    document.getElementById('login-button').style.display = 'inline-block';
-                    document.getElementById('logout-button').style.display = 'none';
-                    document.getElementById('welcome-message').style.display = 'none';
-                    document.getElementById('email-section').style.display = 'none'; // Hide email section if not logged in
-                    document.getElementById('login-alert').style.display = 'block'; // Show login alert
-                }
-            } catch (error) {
-                console.error("Error checking login status:", error);
-            }
-        }
-
-        async function processRequest() {
-            // Check if the user is logged in
-            const loginStatusResponse = await fetch('/login_status', { method: 'GET' });
-            const loginStatus = await loginStatusResponse.json();
-
-            if (!loginStatus.logged_in) {
-                // Show the error message if the user is not logged in
-                document.getElementById('login-error-message').style.display = 'block';
-                return;
-            }
-
-            // If logged in, proceed with processing the request
-            document.getElementById('login-error-message').style.display = 'none'; // Hide the error message if logged in
-
-            const emailBody = document.getElementById('emailBody').value;
-            const selectedAction = document.querySelector('.action-box.active')?.innerText || '';
-            const customAction = document.getElementById('customAction').value;
-
-            const payload = {
-                email_body: emailBody,
-                action: selectedAction || customAction
-            };
-
-            // Show spinner and disable process button
-            document.getElementById('spinner').style.display = 'block';
-            document.getElementById('process-button').disabled = true;
-
-            fetch('http://localhost/get_processed_text', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(response.statusText); // Handle HTTP errors
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.error) {
-                    document.getElementById('error-message').innerText = `Error: ${data.error}`;
-                    document.getElementById('error-message').style.display = 'block'; // Show error message
-                    document.getElementById('outputText').value = '';
-                } else {
-                    document.getElementById('outputText').value = data["response_msg"];
-                    document.getElementById('error-message').style.display = 'none'; // Hide error message if successful
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('error-message').innerText = `Error: Unable to process request (${error.message})`;
-                document.getElementById('error-message').style.display = 'block'; // Show error message
-                document.getElementById('outputText').value = '';
-            })
-            .finally(() => {
-                // Hide spinner and enable process button
-                document.getElementById('spinner').style.display = 'none';
-                document.getElementById('process-button').disabled = false;
-            });
-        }
-
-        // Logout functionality script
-        document.getElementById('logout-button').addEventListener('click', async function() {
-            try {
-                const response = await fetch('/logout', { method: 'GET' });
-                const data = await response.json();
-                if (response.ok) {
-                    alert(data.message); // Show a message on successful logout
-                    window.location.href = "/"; // Redirect to the homepage or login page
-                } else {
-                    throw new Error(data.detail || "Logout failed");
-                }
-            } catch (error) {
-                console.error("Logout failed:", error.message);
-                alert("An error occurred: " + error.message);
-            }
-        });
-
-        // Check login status on page load
-        checkLoginStatus();
     </script>
 </body>
 </html>
