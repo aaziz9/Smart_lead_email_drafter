@@ -4,11 +4,14 @@ from fastapi.responses import FileResponse
 static_files_router = APIRouter()
 
 
+# Route for index.html
 @static_files_router.get("/")
 async def email_drafter_page():
     return FileResponse("static/index.html")
 
 
-@static_files_router.get("/context_mail")
-async def context_mail_page():
-    return FileResponse("static/context_mail.html")
+# Route for ContextMail.html
+@static_files_router.get("/ContextMail")
+async def context_mail():
+    return FileResponse("static/ContextMail.html")
+

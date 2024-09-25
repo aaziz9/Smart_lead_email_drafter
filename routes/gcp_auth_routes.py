@@ -2,7 +2,6 @@ import os
 import secrets
 
 import requests
-
 from fastapi import APIRouter
 from fastapi import Request
 from fastapi.responses import JSONResponse, RedirectResponse
