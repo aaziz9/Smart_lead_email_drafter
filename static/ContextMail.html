@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Meta Tags and Title -->
     <meta charset="UTF-8">
@@ -10,72 +11,155 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom Styles -->
     <style>
-        /* Updated theme colors */
         body {
-            background-color: #ffffff; /* Ensure white background */
-            color: #000000; /* Black text */
+            background-color: #ffffff;
+            color: #000000;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .navbar {
-            background-color: #f7f7f7; /* Light gray navbar */
-            border-bottom: 2px solid #ff6900; /* Orange bottom border */
+            background-color: #f7f7f7;
+            border-bottom: 2px solid #ff6900;
         }
-        .navbar-brand, .navbar-nav .nav-link {
-            color: #000000; /* Black text for nav items */
+
+        .navbar-brand,
+        .navbar-nav .nav-link {
+            color: #000000;
         }
+
         .navbar-brand {
-            font-weight: bold; /* Bold brand name */
+            font-weight: bold;
         }
+
         .btn-custom {
-            background-color: #ff6900; /* Orange button background */
-            color: #ffffff; /* White text */
+            background-color: #ff6900;
+            color: #ffffff;
             border: none;
             border-radius: 5px;
             padding: 8px 16px;
             cursor: pointer;
-            text-align: center;
-            display: inline-block;
         }
+
         .btn-custom:hover {
-            background-color: #e65a00; /* Darker orange on hover */
+            background-color: #e65a00;
         }
-        .navbar-nav {
-            display: flex;
-            align-items: center;
+
+        .email-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
         }
-        .navbar-nav .nav-item {
-            display: flex;
-            align-items: center;
+
+        .preview-container {
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
-        #nav-buttons {
-            display: flex;
-            align-items: center;
+
+        .truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
         }
+
+
     </style>
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container-fluid d-flex justify-content-between align-items-center">
-            <!-- Left Side: Brand and Navigation Links -->
-            <div class="d-flex align-items-center">
-                <!-- Brand -->
-                <a class="navbar-brand d-flex align-items-center" href="#">
-                    <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
-                    <span class="ms-2">AI SMART LEAD</span>
-                </a>
-                <!-- Navigation Links -->
-                <div class="navbar-nav ms-3">
-                    <a class="nav-link" href="/">Email Drafter</a>
-                    <a class="nav-link" href="/ContextMail">Context Mail</a>
+
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <a class="navbar-brand d-flex align-items-center" href="#">
+                        <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo"
+                             style="height: 40px; margin-right: 10px;">
+                        <span class="ms-2">AI SMART LEAD</span>
+                    </a>
+                    <div class="navbar-nav ms-3">
+                        <a class="nav-link" href="/">Email Drafter</a>
+                        <a class="nav-link" href="/ContextMail">Context Mail</a>
+                    </div>
+                </div>
+                <div class="navbar-nav" id="nav-buttons">
+                    <button id="logout-button" class="btn btn-custom">Logout</button>
+                    <span id="welcome-message" style="margin-left: 15px; color: #ff6900;">Welcome, User!</span>
                 </div>
             </div>
-            <!-- Right Side: Logout Button and Welcome Message -->
-            <div class="navbar-nav" id="nav-buttons">
-                <button id="logout-button" class="btn btn-custom">Logout</button>
-                <span id="welcome-message" style="margin-left: 15px; color: #ff6900;">Welcome, User!</span>
+        </nav>
+
+        <div class="container mt-4">
+            <h2>Select Email Thread</h2>
+            <div class="mb-3">
+                <select class="form-select" id="email-thread-dropdown">
+                    <option selected disabled>Choose an email thread...</option>
+                </select>
+            </div>
+
+            <div id="email-preview" class="preview-container mt-4">
+                <!-- Emails will be shown here as cards -->
             </div>
         </div>
-    </nav>
-</body>
+
+        <!-- Bootstrap JS and dependencies -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- JavaScript to handle dropdown actions and fetch requests -->
+        <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const emailThreadDropdown = document.getElementById('email-thread-dropdown');
+                    const emailPreview = document.getElementById('email-preview');
+
+                    // Fetch the email threads when the dropdown is clicked
+                    emailThreadDropdown.addEventListener('click', function () {
+                        if (emailThreadDropdown.options.length === 1) { // Only fetch if not already fetched
+                            fetch('http://localhost/context_mail/v1/email_threads')
+                                .then(response => response.json())
+                                .then(data => {
+                                    data.data.forEach(thread => {
+                                        const option = document.createElement('option');
+                                        option.value = thread.id;
+                                        option.textContent = thread.title;
+                                        emailThreadDropdown.appendChild(option);
+                                    });
+                                })
+                                .catch(error => console.error('Error fetching email threads:', error));
+                        }
+                    });
+
+                    // Handle selection of email thread
+                    emailThreadDropdown.addEventListener('change', function () {
+                        const selectedThreadId = emailThreadDropdown.value;
+                        const apiUrl = `http://localhost/context_mail/v1/email_threads/${selectedThreadId}/emails`;
+
+                        // Fetch emails for the selected thread
+                        fetch(apiUrl)
+                            .then(response => response.json())
+                            .then(data => {
+                                emailPreview.innerHTML = ''; // Clear previous emails
+                                data.emails.forEach(email => {
+                                    const emailCard = document.createElement('div');
+                                    emailCard.className = 'email-card';
+
+                                    const emailSubject = document.createElement('h5');
+                                    emailSubject.textContent = email.subject;
+                                    emailCard.appendChild(emailSubject);
+
+                                    const emailBody = document.createElement('p');
+                                    emailBody.textContent = email.body.substring(0, 256) + '...'; // Truncate to 256 characters
+                                    emailBody.className = 'truncate';
+                                    emailCard.appendChild(emailBody);
+
+                                    emailPreview.appendChild(emailCard);
+                                });
+                            })
+                            .catch(error => console.error('Error fetching emails:', error));
+                    });
+                });
+
+        </script>
+    </body>
 </html>
