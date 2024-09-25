@@ -55,7 +55,13 @@ async def get_emails_as_str_in_thread_context(request: Request, email_thread_id:
                 result_str += f'Email Body: {email["body"]}\n'
                 result_str += "============ End of email separator ============\n\n"
 
-            return result_str
+            # return result_str
+
+            processed_text = get_processed_text_by_text_bison(input_text=result_str,
+                                                              action="[CONTEXT_BASED_EMAIL_DRAFTER]",
+                                                              auth_token=token["access_token"])["result"]
+
+            return JSONResponse({"response_msg": processed_text}, status_code=200)
         except Exception:
             print(traceback.format_exc())
             raise HTTPException(status_code=500, detail="Unable to get emails from thread")
