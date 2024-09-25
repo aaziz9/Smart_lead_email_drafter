@@ -1,202 +1,406 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <!-- Meta Tags and Title -->
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Email Drafter</title>
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!-- Custom Styles -->
-        <style>
-            body {
-                background-color: #ffffff;
-                color: #000000;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            }
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Drafter</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-            .navbar {
-                background-color: #f7f7f7;
-                border-bottom: 2px solid #ff6900;
-            }
+        .navbar {
+            background-color: #f7f7f7;
+            border-bottom: 2px solid #ff6900;
+        }
 
-            .navbar-brand,
-            .navbar-nav .nav-link {
-                color: #000000;
-            }
+        .navbar-brand,
+        .navbar-nav .nav-link {
+            color: #000000;
+        }
 
-            .navbar-brand {
-                font-weight: bold;
-            }
+        .navbar-brand {
+            font-weight: bold;
+        }
 
-            .btn-custom {
-                background-color: #ff6900;
-                color: #ffffff;
-                border: none;
-                border-radius: 5px;
-                padding: 8px 16px;
-                cursor: pointer;
-            }
+        .btn-custom {
+            background-color: #ff6900;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            width: 100px;
+            text-align: center;
+            margin: 0 5px;
+            display: inline-block;
+            vertical-align: middle;
+        }
 
-            .btn-custom:hover {
-                background-color: #e65a00;
-            }
+        .btn-custom:hover {
+            background-color: #e65a00;
+        }
 
-            .email-card {
-                border: 1px solid #ccc;
-                padding: 10px;
-                margin-bottom: 10px;
-                border-radius: 5px;
-            }
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+        }
 
-            .preview-container {
-                max-height: 400px;
-                overflow-y: auto;
-                overflow-x: hidden;
-            }
+        .navbar-nav .nav-item {
+            display: flex;
+            align-items: center;
+        }
 
-            .email-body {
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: normal;
-            }
+        .navbar-nav .nav-link:hover {
+            color: #ff6900; /* Change the color to orange on hover */
+        }
 
-            .expanded {
-                -webkit-line-clamp: unset;
-            }
+        .action-box {
+            background-color: #f7f7f7;
+            color: #000000;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            margin-right: 10px;
+            border: 1px solid #ff6900;
+        }
 
-            .truncate {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                max-width: 100%;
-            }
+        .action-box.active {
+            background-color: #ff6900;
+            color: #ffffff;
+        }
 
-            .email-recipients {
-                font-style: italic;
-                color: #555;
-                margin-top: 5px;
-            }
+        .output-box {
+            background-color: #f7f7f7;
+            color: #000000;
+            border: 1px solid #ff6900;
+            border-radius: 5px;
+        }
 
-        </style>
-    </head>
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
 
-    <body>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="container-fluid d-flex justify-content-between align-items-center">
-                <div class="d-flex align-items-center">
-                    <a class="navbar-brand d-flex align-items-center" href="#">
-                        <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
-                        <span class="ms-2">AI SMART LEAD</span>
-                    </a>
-                    <div class="navbar-nav ms-3">
+        .alert-danger {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 5px;
+        }
+
+        /* Scrollbar for Email Body Textarea */
+        #emailBody {
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Scrollbar for Output Textarea */
+        #outputText {
+            height: 200px;
+            overflow-y: auto;
+        }
+
+        .email-card {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .preview-container {
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .email-body {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+        }
+
+        .expanded {
+            -webkit-line-clamp: unset;
+        }
+
+        .truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .email-recipients {
+            font-style: italic;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .login-alert {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeeba;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <!-- Left Side: Brand and Navigation Links -->
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+                    <span class="ms-2">AI SMART LEAD</span>
+                </a>
+                <!-- Navigation Links -->
+                <div class="navbar-nav ms-3">
+                    <div class="nav-item">
                         <a class="nav-link" href="/">Email Drafter</a>
+                    </div>
+                    <div class="nav-item">
                         <a class="nav-link" href="/ContextMail">Context Mail</a>
                     </div>
                 </div>
-                <div class="navbar-nav" id="nav-buttons">
-                    <button id="logout-button" class="btn btn-custom">Logout</button>
-                    <span id="welcome-message" style="margin-left: 15px; color: #ff6900;">Welcome, User!</span>
+            </div>
+            <!-- Right Side: Login/Logout Buttons -->
+            <div class="navbar-nav" id="nav-buttons">
+                <div class="nav-item d-flex align-items-center">
+                    <a class="nav-link p-0 m-0" href="http://localhost/login">
+                        <button class="btn btn-custom" id="login-button">Login</button>
+                    </a>
+                    <button id="logout-button" class="btn btn-custom" style="display: none;">Logout</button>
+                    <span id="welcome-message" style="display: none; margin-left: 15px; color: #ff6900;">Welcome, User!</span>
                 </div>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <div class="container mt-4">
-            <h2>Select Email Thread</h2>
-            <div class="mb-3">
-                <select class="form-select" id="email-thread-dropdown">
-                    <option selected disabled>Choose an email thread...</option>
-                </select>
-            </div>
-
-            <div id="email-preview" class="preview-container mt-4">
-                <!-- Emails will be shown here as cards -->
-            </div>
+    <!-- Login Alert for Non-Logged In Users -->
+    <div id="login-alert" class="login-alert" style="display: none;">
+        You need to log in to view and access the emails. Please log in first.
+    </div>
+    <!-- Email Section -->
+    <div class="container mt-4" id="email-section" style="display: none;"> <!-- Hidden by default -->
+        <h2>Select Email Thread</h2>
+        <div class="mb-3">
+            <select class="form-select" id="email-thread-dropdown">
+                <option selected disabled>Choose an email thread...</option>
+            </select>
         </div>
 
-        <!-- Bootstrap JS and dependencies -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <div id="email-preview" class="preview-container mt-4">
+            <!-- Emails will be shown here as cards -->
+        </div>
+    </div>
 
-        <!-- JavaScript to handle dropdown actions and fetch requests -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const emailThreadDropdown = document.getElementById('email-thread-dropdown');
-                const emailPreview = document.getElementById('email-preview');
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-                // Fetch the email threads when the dropdown is clicked
-                emailThreadDropdown.addEventListener('click', function () {
-                    if (emailThreadDropdown.options.length === 1) { // Only fetch if not already fetched
-                        fetch('http://localhost/context_mail/v1/email_threads')
-                            .then(response => response.json())
-                            .then(data => {
-                                data.data.forEach(thread => {
-                                    const option = document.createElement('option');
-                                    option.value = thread.id;
-                                    option.textContent = thread.title;
-                                    emailThreadDropdown.appendChild(option);
-                                });
-                            })
-                            .catch(error => console.error('Error fetching email threads:', error));
-                    }
-                });
+    <!-- JavaScript to handle dropdown actions and fetch requests -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const emailThreadDropdown = document.getElementById('email-thread-dropdown');
+            const emailPreview = document.getElementById('email-preview');
 
-                // Handle selection of email thread
-                emailThreadDropdown.addEventListener('change', function () {
-                    const selectedThreadId = emailThreadDropdown.value;
-                    const apiUrl = `http://localhost/context_mail/v1/email_threads/${selectedThreadId}/emails`;
-
-                    // Fetch emails for the selected thread
-                    fetch(apiUrl)
+            // Fetch the email threads when the dropdown is clicked
+            emailThreadDropdown.addEventListener('click', function () {
+                if (emailThreadDropdown.options.length === 1) { // Only fetch if not already fetched
+                    fetch('http://localhost/context_mail/v1/email_threads')
                         .then(response => response.json())
                         .then(data => {
-                            emailPreview.innerHTML = ''; // Clear previous emails
-                            data.emails.forEach(email => {
-                                const emailCard = document.createElement('div');
-                                emailCard.className = 'email-card';
-
-                                const emailSubject = document.createElement('h5');
-                                emailSubject.textContent = email.subject;
-                                emailCard.appendChild(emailSubject);
-
-                                const emailBody = document.createElement('p');
-                                emailBody.textContent = email.body;
-                                emailBody.className = 'email-body';
-                                emailCard.appendChild(emailBody);
-
-                                // Display recipients in the card
-                                const recipients = document.createElement('p');
-                                recipients.className = 'email-recipients';
-                                recipients.textContent = 'Recipients: ' + email.recipients.join(', ');
-                                emailCard.appendChild(recipients);
-
-                                // Create "Show More"/"Show Less" button
-                                const toggleButton = document.createElement('button');
-                                toggleButton.className = 'btn btn-link p-0';
-                                toggleButton.textContent = 'Show More';
-
-                                toggleButton.addEventListener('click', function () {
-                                    if (emailBody.classList.contains('expanded')) {
-                                        emailBody.classList.remove('expanded');
-                                        toggleButton.textContent = 'Show More';
-                                    } else {
-                                        emailBody.classList.add('expanded');
-                                        toggleButton.textContent = 'Show Less';
-                                    }
-                                });
-
-                                emailCard.appendChild(toggleButton);
-                                emailPreview.appendChild(emailCard);
+                            data.data.forEach(thread => {
+                                const option = document.createElement('option');
+                                option.value = thread.id;
+                                option.textContent = thread.title;
+                                emailThreadDropdown.appendChild(option);
                             });
                         })
-                        .catch(error => console.error('Error fetching emails:', error));
-                });
+                        .catch(error => console.error('Error fetching email threads:', error));
+                }
             });
-        </script>
-    </body>
+
+            // Handle selection of email thread
+            emailThreadDropdown.addEventListener('change', function () {
+                const selectedThreadId = emailThreadDropdown.value;
+                const apiUrl = `http://localhost/context_mail/v1/email_threads/${selectedThreadId}/emails`;
+
+                // Fetch emails for the selected thread
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        emailPreview.innerHTML = ''; // Clear previous emails
+                        data.emails.forEach(email => {
+                            const emailCard = document.createElement('div');
+                            emailCard.className = 'email-card';
+
+                            const emailSubject = document.createElement('h5');
+                            emailSubject.textContent = email.subject;
+                            emailCard.appendChild(emailSubject);
+
+                            const emailBody = document.createElement('p');
+                            emailBody.textContent = email.body;
+                            emailBody.className = 'email-body';
+                            emailCard.appendChild(emailBody);
+
+                            // Display recipients in the card
+                            const recipients = document.createElement('p');
+                            recipients.className = 'email-recipients';
+                            recipients.textContent = 'Recipients: ' + email.recipients.join(', ');
+                            emailCard.appendChild(recipients);
+
+                            // Create "Show More"/"Show Less" button
+                            const toggleButton = document.createElement('button');
+                            toggleButton.className = 'btn btn-link p-0';
+                            toggleButton.textContent = 'Show More';
+
+                            toggleButton.addEventListener('click', function () {
+                                if (emailBody.classList.contains('expanded')) {
+                                    emailBody.classList.remove('expanded');
+                                    toggleButton.textContent = 'Show More';
+                                } else {
+                                    emailBody.classList.add('expanded');
+                                    toggleButton.textContent = 'Show Less';
+                                }
+                            });
+
+                            emailCard.appendChild(toggleButton);
+                            emailPreview.appendChild(emailCard);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching emails:', error));
+            });
+        });
+
+        // Check login status and update the UI accordingly
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/login_status', { method: 'GET' });
+                const data = await response.json();
+                if (data.logged_in) {
+                    document.getElementById('login-button').style.display = 'none';
+                    document.getElementById('logout-button').style.display = 'inline-block';
+                    document.getElementById('welcome-message').style.display = 'inline-block';
+                    document.getElementById('welcome-message').innerText = `Welcome, ${data.user_info.name || 'User'}!`;
+                    document.getElementById('email-section').style.display = 'block'; // Show email section if logged in
+                    document.getElementById('login-alert').style.display = 'none'; // Hide login alert
+                } else {
+                    document.getElementById('login-button').style.display = 'inline-block';
+                    document.getElementById('logout-button').style.display = 'none';
+                    document.getElementById('welcome-message').style.display = 'none';
+                    document.getElementById('email-section').style.display = 'none'; // Hide email section if not logged in
+                    document.getElementById('login-alert').style.display = 'block'; // Show login alert
+                }
+            } catch (error) {
+                console.error("Error checking login status:", error);
+            }
+        }
+
+        async function processRequest() {
+            // Check if the user is logged in
+            const loginStatusResponse = await fetch('/login_status', { method: 'GET' });
+            const loginStatus = await loginStatusResponse.json();
+
+            if (!loginStatus.logged_in) {
+                // Show the error message if the user is not logged in
+                document.getElementById('login-error-message').style.display = 'block';
+                return;
+            }
+
+            // If logged in, proceed with processing the request
+            document.getElementById('login-error-message').style.display = 'none'; // Hide the error message if logged in
+
+            const emailBody = document.getElementById('emailBody').value;
+            const selectedAction = document.querySelector('.action-box.active')?.innerText || '';
+            const customAction = document.getElementById('customAction').value;
+
+            const payload = {
+                email_body: emailBody,
+                action: selectedAction || customAction
+            };
+
+            // Show spinner and disable process button
+            document.getElementById('spinner').style.display = 'block';
+            document.getElementById('process-button').disabled = true;
+
+            fetch('http://localhost/get_processed_text', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.statusText); // Handle HTTP errors
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('error-message').innerText = `Error: ${data.error}`;
+                    document.getElementById('error-message').style.display = 'block'; // Show error message
+                    document.getElementById('outputText').value = '';
+                } else {
+                    document.getElementById('outputText').value = data["response_msg"];
+                    document.getElementById('error-message').style.display = 'none'; // Hide error message if successful
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('error-message').innerText = `Error: Unable to process request (${error.message})`;
+                document.getElementById('error-message').style.display = 'block'; // Show error message
+                document.getElementById('outputText').value = '';
+            })
+            .finally(() => {
+                // Hide spinner and enable process button
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('process-button').disabled = false;
+            });
+        }
+
+        // Logout functionality script
+        document.getElementById('logout-button').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/logout', { method: 'GET' });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message); // Show a message on successful logout
+                    window.location.href = "/"; // Redirect to the homepage or login page
+                } else {
+                    throw new Error(data.detail || "Logout failed");
+                }
+            } catch (error) {
+                console.error("Logout failed:", error.message);
+                alert("An error occurred: " + error.message);
+            }
+        });
+
+        // Check login status on page load
+        checkLoginStatus();
+    </script>
+</body>
 </html>
