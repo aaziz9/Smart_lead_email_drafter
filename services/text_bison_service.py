@@ -29,11 +29,17 @@ def get_processed_text_by_text_bison(input_text, action, auth_token):
         response_msg["status"] = 500
         return response_msg
 
+    action_description = f'Rephrase the content above, and give me an email based on the following description: "{action}"'
+
     # Custom handling for "Omantel Key Account Manager"
     if action == "Omantel Key Account Manager":
         action_description = "Rephrase the email in a formal tone, suitable for an Omantel Key Account Manager. Use telecom industry-specific terms where appropriate."
-    else:
-        action_description = f'Rephrase the content above, and give me an email based on the following description: "{action}"'
+    elif action == "[CONTEXT_BASED_EMAIL_DRAFTER]":
+        action_description = """
+        Based on the given emails and keeping all useful facts and figures, generate a summarized draft email including 
+        all essential information. This draft will be used as a response to the last email in the given email thread.
+        Make sure the responder is the sender of the first email.  
+        """
 
     payload: dict = {
         "instances": [

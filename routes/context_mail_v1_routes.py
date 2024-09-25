@@ -1,3 +1,5 @@
+import traceback
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -6,6 +8,8 @@ from db_utils.database_init import get_db
 from models.user_model import User
 from models.email_model import Email
 from models.email_thread_model import EmailThread
+from services.context_mail_service import get_emails_in_curr_thread
+
 
 context_mail_router = APIRouter()
 
@@ -54,29 +58,10 @@ async def get_email_threads(db: Session = Depends(get_db)):
 
 @context_mail_router.get("/context_mail/v1/email_threads/{thread_id}/emails")
 async def get_emails_in_thread(thread_id: int, db: Session = Depends(get_db)):
-    # Query the thread by its ID
-    thread = db.query(EmailThread).filter(EmailThread.id == thread_id).first()
+    try:
+        emails_in_curr_thread = get_emails_in_curr_thread(thread_id=thread_id, db_pointer=db)
+        return emails_in_curr_thread  # Return the thread details and associated emails in JSON format
+    except Exception:
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail="Unable to get emails from thread")
 
-    # If thread does not exist, return a 404 error
-    if not thread:
-        raise HTTPException(status_code=404, detail="Thread not found")
-
-    # Query all emails in this thread
-    emails_in_thread = thread.emails  # This will automatically query due to the relationship
-
-    # Return the thread details and associated emails in JSON format
-    return {
-        "thread_id": thread.id,
-        "subject": thread.title,
-        "emails": [
-            {
-                "email_id": email.id,
-                "subject": email.subject,
-                "body": email.body,
-                "timestamp": email.timestamp,
-                "sender_id": email.sender_id,
-                "recipients": [curr_recipient.recipient.email for curr_recipient in email.recipients]
-            }
-            for email in emails_in_thread
-        ]
-    }
