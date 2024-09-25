@@ -43,12 +43,13 @@ if __name__ == "__main__":
         db.add_all([user1, user2, user3, user4, user5, user6])
         db.commit()
 
+        # Create email threads
         email_thread1 = email_thread_model.EmailThread(title="Partnership Opportunities with Omantel")
-        email_thread2 = email_thread_model.EmailThread(title="iPhone sales revenue")
+        email_thread2 = email_thread_model.EmailThread(title="Exclusive Offer on iPhone 15 for Omantel Partners")
         db.add_all([email_thread1, email_thread2])
         db.commit()
 
-        # Insert dummy emails
+        # Insert dummy emails between Ahmed and Maryam
         email1 = email_model.Email(subject="Partnership Opportunities with Omantel",
                                    body=
                                    """ 
@@ -123,7 +124,54 @@ if __name__ == "__main__":
                                    sender_id=1,
                                    thread_id=1)
 
-        db.add_all([email1, email2, email3, email4, email5])
+        # Insert dummy emails between Ahmed and Zainab
+        email6 = email_model.Email(subject="Exclusive Offer on iPhone 15 for Omantel Partners",
+                                   body="""
+                                   Dear Zainab,
+                                   
+                                   I hope you're doing well. I'm excited to inform you about an exclusive offer we have on the new iPhone 15 for our valued partners like you. We've secured a limited stock with special pricing that I believe would be beneficial for your team.
+                                   Given the high demand, I'd recommend placing orders early to ensure availability. Please let me know if you're interested, and we can discuss the details.
+                                   
+                                   Best regards,
+                                   Ahmed Al-Mansoori
+                                   Key Account Manager, Omantel
+                                   +968 1234 5678
+                                   ahmed.almansoori@omantel.om
+                                   """,
+                                   sender_id=1,
+                                   thread_id=2)
+
+        email7 = email_model.Email(subject="Re: Exclusive Offer on iPhone 15 for Omantel Partners",
+                                   body="""
+                                   Dear Ahmed,
+                                   
+                                   Thank you for reaching out with this offer. The new iPhone 15 sounds like a great opportunity. Could you please provide more details on the pricing and the quantities available? Also, are there any bundle packages if we purchase in bulk?
+                                   
+                                   Looking forward to your response.
+                                   
+                                   Best regards,
+                                   Zainab Al-Majali
+                                   Procurement Manager
+                                   """,
+                                   sender_id=5,
+                                   thread_id=2)
+
+        email8 = email_model.Email(subject="Re: Exclusive Offer on iPhone 15 for Omantel Partners",
+                                   body="""
+                                   Dear Zainab,
+                                   
+                                   Absolutely, I'd be happy to provide more details. We are offering a 15% discount off the retail price for orders above 50 units, and a 20% discount for orders exceeding 100 units. Additionally, we can include accessory bundles at no extra cost for bulk purchases.
+                                   
+                                   I have attached a detailed proposal with all the pricing tiers and package options. Please review it and let me know if you have any questions or if you'd like to proceed with an order.
+                                   
+                                   Best regards,
+                                   Ahmed Al-Mansoori
+                                   Key Account Manager, Omantel
+                                   """,
+                                   sender_id=1,
+                                   thread_id=2)
+
+        db.add_all([email1, email2, email3, email4, email5, email6, email7, email8])
         db.commit()
 
         # Add recipients to the emails
@@ -133,7 +181,11 @@ if __name__ == "__main__":
         recipient4 = email_recipient_model.EmailRecipient(email_id=4, recipient_id=1, recipient_type="to")
         recipient5 = email_recipient_model.EmailRecipient(email_id=5, recipient_id=3, recipient_type="to")
 
-        db.add_all([recipient1, recipient2, recipient3, recipient4, recipient5])
+        recipient6 = email_recipient_model.EmailRecipient(email_id=6, recipient_id=5, recipient_type="to")
+        recipient7 = email_recipient_model.EmailRecipient(email_id=7, recipient_id=1, recipient_type="to")
+        recipient8 = email_recipient_model.EmailRecipient(email_id=8, recipient_id=5, recipient_type="to")
+
+        db.add_all([recipient1, recipient2, recipient3, recipient4, recipient5, recipient6, recipient7, recipient8])
         db.commit()
 
         print("Dummy data inserted successfully!")
