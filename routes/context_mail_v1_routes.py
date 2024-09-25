@@ -75,6 +75,7 @@ async def get_emails_in_thread(thread_id: int, db: Session = Depends(get_db)):
                 "body": email.body,
                 "timestamp": email.timestamp,
                 "sender_id": email.sender_id,
+                "recipients": [curr_recipient.recipient.email for curr_recipient in email.recipients]
             }
             for email in emails_in_thread
         ]
