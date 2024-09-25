@@ -7,12 +7,13 @@ GCP_TEXT_BISON_MODEL_URL = "https://us-central1-aiplatform.googleapis.com/v1/pro
 # Function to process text with different actions using Text Bison
 def get_processed_text_by_text_bison(input_text, action, auth_token):
     response_msg: dict = {"status": None, "err_msg": None, "result": None}
+    action_description = f'Rephrase the content above, and give me an email based on the following description: "{action}"'
     
     # Custom handling for "Omantel Key Account Manager"
     if action == "Omantel Key Account Manager":
         action_description = "Rephrase the email in a formal tone, suitable for an Omantel Key Account Manager. Use telecom industry-specific terms where appropriate."
-    else:
-        action_description = f'Rephrase the content above, and give me an email based on the following description: "{action}"'
+    elif action == "[context_based_email_drafter]":
+        action_description = ""
 
     payload: dict = {
         "instances": [
