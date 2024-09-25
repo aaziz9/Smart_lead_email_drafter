@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Configuration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        /* Styling for buttons to make them orange */
+        .btn-custom {
+            background-color: #ff6900;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-custom:hover {
+            background-color: #e65a00;
+        }
+        /* Reduce input field size for numbers */
+        input[type="number"] {
+            width: 25%; /* Reduce size further */
+            display: inline-block;
+        }
+        label {
+            margin-right: 10px; /* Add space between labels and inputs */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Container for Editing Configuration -->
+    <div class="container">
+        <h2>Edit Configuration</h2>
+        <div class="mb-2">
+            <label for="temperature">Temperature:</label>
+            <input type="number" id="temperature" class="form-control d-inline" step="0.01" min="0" max="1">
+        </div>
+
+        <div class="mb-2">
+            <label for="max_output_tokens">Max Output Tokens:</label>
+            <input type="number" id="max_output_tokens" class="form-control d-inline" min="1">
+        </div>
+
+        <div class="mb-2">
+            <label for="topK">TopK:</label>
+            <input type="number" id="topK" class="form-control d-inline" min="1">
+        </div>
+
+        <div class="mb-2">
+            <label for="topP">TopP:</label>
+            <input type="number" id="topP" class="form-control d-inline" step="0.01" min="0" max="1">
+        </div>
+
+        <!-- Save Button with orange style -->
+        <button class="btn btn-custom mt-2" onclick="updateConfig()">Save</button>
+    </div>
+
+    <script>
+        // Load current config when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/get_config')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('temperature').value = data.parameters.temperature;
+                document.getElementById('max_output_tokens').value = data.parameters.max_output_tokens;
+                document.getElementById('topK').value = data.parameters.topK;
+                document.getElementById('topP').value = data.parameters.topP;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        function updateConfig() {
+            const temperature = document.getElementById('temperature').value;
+            const max_output_tokens = document.getElementById('max_output_tokens').value;
+            const topK = document.getElementById('topK').value;
+            const topP = document.getElementById('topP').value;
+
+            const configPayload = {
+                temperature: parseFloat(temperature),
+                max_output_tokens: parseInt(max_output_tokens),
+                topK: parseInt(topK),
+                topP: parseFloat(topP)
+            };
+
+            fetch('/update_config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(configPayload),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message || 'Config updated successfully!');
+                window.location.href = '/'; // Redirect back to main page
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
