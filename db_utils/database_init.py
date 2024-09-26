@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     try:
         # Insert dummy users
-        user1 = user_model.User(name="Ahmed", email="ahmed.almansoori@omantel.om")
+        user1 = user_model.User(name="Atyab", email="syed.atyab.hussain@gmail.com")
         user2 = user_model.User(name="Basma", email="basama.saadi@omantel.om")
         user3 = user_model.User(name="Maryam", email="maryam.almamari@oreedo.com")
         user4 = user_model.User(name="Ali", email="ali.aziz@oreedo.com")
