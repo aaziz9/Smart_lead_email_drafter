@@ -1,6 +1,6 @@
 import traceback
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import Request, APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
@@ -49,6 +49,32 @@ async def get_emails_from_a_sender(sender_id: int, db: Session = Depends(get_db)
 @context_mail_router.get("/context_mail/v1/email_threads")
 async def get_email_threads(db: Session = Depends(get_db)):
     fetched_email_threads = db.query(EmailThread).all()
+    return JSONResponse(
+        status_code=200, content={"data": [
+            {"id": thread.id, "title": thread.title} for thread in fetched_email_threads
+        ]}
+    )
+
+
+@context_mail_router.get("/context_mail/v2/email_threads")
+async def get_email_threads_for_curr_user(request: Request, db: Session = Depends(get_db)):
+    # Get the logged-in user's email from the session
+    user_email = request.session.get("user_info", {}).get("email")
+
+    # If the email is not found in the session, return a 403 (Forbidden) error
+    if not user_email:
+        raise HTTPException(status_code=403, detail="User is not logged in")
+
+    # Query the user by email
+    user = db.query(User).filter(User.email == user_email).first()
+
+    # If user is not found, raise a 404 error
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Query the threads where the user is the sender of at least one email
+    fetched_email_threads = db.query(EmailThread).join(Email).filter(Email.sender_id == user.id).all()
+
     return JSONResponse(
         status_code=200, content={"data": [
             {"id": thread.id, "title": thread.title} for thread in fetched_email_threads

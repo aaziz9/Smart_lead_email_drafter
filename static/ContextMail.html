@@ -157,7 +157,7 @@
             // Fetch the email threads when the dropdown is clicked
             emailThreadDropdown.addEventListener('click', function () {
                 if (emailThreadDropdown.options.length === 1) { // Only fetch if not already fetched
-                    fetch('http://localhost/context_mail/v1/email_threads')
+                    fetch('http://localhost/context_mail/v2/email_threads')
                         .then(response => response.json())
                         .then(data => {
                             data.data.forEach(thread => {
