@@ -1,0 +1,28 @@
+{
+  "email_threads": [
+    {
+      "id": 3,
+      "title": "Collaborative Marketing Strategy",
+      "emails": [
+        {
+          "subject": "Collaborative Marketing Strategy",
+          "body": "Dear Team,\n\nI hope this message finds you well. I would like to discuss a potential collaboration for our marketing campaigns in the upcoming quarter. We have seen great results with our previous efforts and I believe there is room for more impactful initiatives.\n\nLooking forward to hearing your thoughts.\n\nBest regards,\nBasma Saadi\nMarketing Manager, Omantel",
+          "sender_id": 2,
+          "timestamp": "2024-09-22T09:28:29Z",
+          "recipients": [
+            "marketing@omantel.om"
+          ]
+        },
+        {
+          "subject": "Re: Collaborative Marketing Strategy",
+          "body": "Dear Basma,\n\nThank you for reaching out. I agree that our previous campaigns have been successful. I would like to propose focusing on digital channels this time around, as we've seen a shift in consumer behavior towards online engagement.\n\nBest,\nMarketing Team",
+          "sender_id": 4,
+          "timestamp": "2024-09-22T10:00:00Z",
+          "recipients": [
+            "basama.saadi@omantel.om"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "email_threads": [
+    {
+      "id": 1,
+      "title": "Partnership Opportunities with Omantel",
+      "emails": [
+        {
+          "subject": "Partnership Opportunities with Omantel",
+          "body": "Dear Maryam,\n\nI hope this message finds you well. My name is Ahmed Al-Mansoori, and I am the Key Account Manager at Omantel. I wanted to reach out to discuss how we can further enhance our partnership and support your business needs.\n\nBest regards,\nAhmed Al-Mansoori\nKey Account Manager, Omantel",
+          "sender_id": 1,
+          "timestamp": "2024-09-22T09:28:29Z",
+          "recipients": [
+            "maryam.almamari@oreedo.com"
+          ]
+        },
+        {
+          "subject": "Re: Partnership Opportunities with Omantel",
+          "body": "Dear Ahmed,\n\nThank you for reaching out. I appreciate your interest in enhancing our partnership. The growth numbers sound promising! I am available for a call on Tuesday, October 3rd, at 10:00 AM if that works for you.\n\nLooking forward to our discussion.\n\nBest,\nMaryam Al-Mamari\nOperations Manager\nTech Solutions Inc.",
+          "sender_id": 3,
+          "timestamp": "2024-09-22T10:00:00Z",
+          "recipients": [
+            "ahmed.almansoori@omantel.om"
+          ]
+        }
+      ]
+    }
+  ]
+}

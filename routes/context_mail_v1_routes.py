@@ -64,4 +64,3 @@ async def get_emails_in_thread(thread_id: int, db: Session = Depends(get_db)):
     except Exception:
         print(traceback.format_exc())
         raise HTTPException(status_code=500, detail="Unable to get emails from thread")
-

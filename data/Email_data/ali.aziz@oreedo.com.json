@@ -1,0 +1,28 @@
+{
+  "email_threads": [
+    {
+      "id": 4,
+      "title": "New Product Launch",
+      "emails": [
+        {
+          "subject": "New Product Launch",
+          "body": "Dear Ali,\n\nWe are excited to announce the launch of our new product line next month. I would like to set up a meeting to discuss how we can collaborate to promote these products within your market segment.\n\nBest regards,\nProduct Team\nOmantel",
+          "sender_id": 1,
+          "timestamp": "2024-09-22T09:28:29Z",
+          "recipients": [
+            "ali.aziz@oreedo.com"
+          ]
+        },
+        {
+          "subject": "Re: New Product Launch",
+          "body": "Dear Team,\n\nThank you for sharing this update. I am interested in discussing potential marketing strategies and how we can align this launch with our current initiatives. Please let me know a suitable time for a meeting.\n\nBest,\nAli Aziz\nRegional Manager\nOoredoo",
+          "sender_id": 4,
+          "timestamp": "2024-09-22T10:00:00Z",
+          "recipients": [
+            "product@omantel.om"
+          ]
+        }
+      ]
+    }
+  ]
+}

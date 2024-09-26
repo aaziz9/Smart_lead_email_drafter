@@ -1,0 +1,28 @@
+{
+  "email_threads": [
+    {
+      "id": 5,
+      "title": "Network Expansion Plans",
+      "emails": [
+        {
+          "subject": "Network Expansion Plans",
+          "body": "Dear Mohammad,\n\nI hope you're doing well. I wanted to discuss potential collaboration opportunities for our upcoming network expansion in the northern region. We believe there are significant growth opportunities we can explore together.\n\nBest regards,\nNetwork Team\nOmantel",
+          "sender_id": 1,
+          "timestamp": "2024-09-22T09:28:29Z",
+          "recipients": [
+            "mohammad.alawati@oreedo.com"
+          ]
+        },
+        {
+          "subject": "Re: Network Expansion Plans",
+          "body": "Dear Team,\n\nThank you for the update. I am interested in exploring how we can work together to maximize the benefits of this expansion. Let's set up a time to discuss the details.\n\nBest regards,\nMohammad Al-Awati\nNetwork Operations\nOoredoo",
+          "sender_id": 6,
+          "timestamp": "2024-09-22T10:00:00Z",
+          "recipients": [
+            "network@omantel.om"
+          ]
+        }
+      ]
+    }
+  ]
+}

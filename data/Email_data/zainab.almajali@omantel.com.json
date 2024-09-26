@@ -1,0 +1,28 @@
+{
+  "email_threads": [
+    {
+      "id": 2,
+      "title": "Exclusive Offer on iPhone 15 for Omantel Partners",
+      "emails": [
+        {
+          "subject": "Exclusive Offer on iPhone 15 for Omantel Partners",
+          "body": "Dear Zainab,\n\nI hope you're doing well. I'm excited to inform you about an exclusive offer we have on the new iPhone 15 for our valued partners like you. We've secured a limited stock with special pricing that I believe would be beneficial for your team.\n\nBest regards,\nAhmed Al-Mansoori\nKey Account Manager, Omantel",
+          "sender_id": 1,
+          "timestamp": "2024-09-22T09:28:29Z",
+          "recipients": [
+            "zainab.almajali@omantel.com"
+          ]
+        },
+        {
+          "subject": "Re: Exclusive Offer on iPhone 15 for Omantel Partners",
+          "body": "Dear Ahmed,\n\nThank you for reaching out with this offer. The new iPhone 15 sounds like a great opportunity. Could you please provide more details on the pricing and the quantities available? Also, are there any bundle packages if we purchase in bulk?\n\nBest regards,\nZainab Al-Majali\nProcurement Manager",
+          "sender_id": 5,
+          "timestamp": "2024-09-22T10:00:00Z",
+          "recipients": [
+            "ahmed.almansoori@omantel.om"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+[
+    {
+        "subject": "Partnership Opportunities with Omantel",
+        "body": "Dear Maryam,\n\nI hope this message finds you well. My name is Ahmed Al-Mansoori, and I am the Key Account Manager at Omantel. I wanted to reach out to discuss how we can further enhance our partnership and support your business needs.\nLast quarter, we saw a significant increase in service adoption, with a 25% growth in our customer base and a 15% increase in sales for our premium packages. I believe there are more opportunities we can explore together.\nCould we schedule a time to discuss this further? I look forward to hearing from you.\n\nBest regards,\nAhmed Al-Mansoori\nKey Account Manager, Omantel\n+968 1234 5678\nahmed.almansoori@omantel.om",
+        "sender_id": 1,
+        "thread_id": 1,
+        "recipients": [
+            {
+                "email": "maryam.almamari@oreedo.com",
+                "recipient_type": "to"
+            }
+        ]
+    },
+    {
+        "subject": "Re: Partnership Opportunities with Omantel",
+        "body": "Dear Ahmed,\n\nThank you for reaching out. I appreciate your interest in enhancing our partnership. The growth numbers sound promising! I am available for a call on Tuesday, October 3rd, at 10:00 AM if that works for you.\nLooking forward to our discussion.\n\nBest,\nMaryam Al-Mamari\nOperations Manager\nTech Solutions Inc.",
+        "sender_id": 3,
+        "thread_id": 1,
+        "recipients": [
+            {
+                "email": "ahmed.almansoori@omantel.om",
+                "recipient_type": "to"
+            }
+        ]
+    },
+    {
+        "subject": "Re: Partnership Opportunities with Omantel",
+        "body": "Dear Maryam,\n\nThank you for your prompt response! I am pleased to confirm our meeting on Tuesday, October 3rd, at 10:00 AM. I will send a calendar invite shortly.\nIn preparation for our discussion, I will have some detailed sales reports showing how our recent initiatives contributed to a 10% revenue increase. Please let me know if there are specific areas you would like to focus on.\n\nBest regards,\nAhmed Al-Mansoori\nKey Account Manager, Omantel",
+        "sender_id": 1,
+        "thread_id": 1,
+        "recipients": [
+            {
+                "email": "maryam.almamari@oreedo.com",
+                "recipient_type": "to"
+            }
+        ]
+    },
+    {
+        "subject": "Re: Partnership Opportunities with Omantel",
+        "body": "Dear Ahmed,\n\nThank you for confirming the meeting. I would like to focus on the following points during our call:\n\n1. Current service performance metrics\n2. New solutions we could explore, especially those that contributed to the recent sales growth\n3. Support for upcoming projects, including projected sales targets\n\nLooking forward to our conversation!\n\nBest,\nMaryam Al-Mamari",
+        "sender_id": 3,
+        "thread_id": 1,
+        "recipients": [
+            {
+                "email": "ahmed.almansoori@omantel.om",
+                "recipient_type": "to"
+            }
+        ]
+    },
+    {
+        "subject": "Follow-Up on Our Recent Discussion",
+        "body": "Dear Maryam,\n\nThank you for the insightful discussion we had on October 3rd. I appreciate your feedback and suggestions. I will compile a detailed proposal addressing the points we discussed, particularly how we can achieve our shared sales targets of 20% growth over the next quarter, and send it over by next Friday.\nIf you have any additional thoughts in the meantime, please feel free to share.\n\nBest regards,\nAhmed Al-Mansoori\nKey Account Manager, Omantel",
+        "sender_id": 1,
+        "thread_id": 1,
+        "recipients": [
+            {
+                "email": "maryam.almamari@oreedo.com",
+                "recipient_type": "to"
+            }
+        ]
+    },
+    {
+        "subject": "Exclusive Offer on iPhone 15 for Omantel Partners",
+        "body": "Dear Zainab,\n\nI hope you're doing well. I'm excited to inform you about an exclusive offer we have on the new iPhone 15 for our valued partners like you. We've secured a limited stock with special pricing that I believe would be beneficial for your team.\nGiven the high demand, I'd recommend placing orders early to ensure availability. Please let me know if you're interested, and we can discuss the details.\n\nBest regards,\nAhmed Al-Mansoori\nKey Account Manager, Omantel\n+968 1234 5678\nahmed.almansoori@omantel.om",
+        "sender_id": 1,
+        "thread_id": 2,
+        "recipients": [
+            {
+                "email": "zainab.almajali@omantel.com",
+                "recipient_type": "to"
+            }
+        ]
+    },
+    {
+        "subject": "Re: Exclusive Offer on iPhone 15 for Omantel Partners",
+        "body": "Dear Ahmed,\n\nThank you for reaching out with this offer. The new iPhone 15 sounds like a great opportunity. Could you please provide more details on the pricing and the quantities available? Also, are there any bundle packages if we purchase in bulk?\n\nLooking forward to your response.\n\nBest regards,\nZainab Al-Majali\nProcurement Manager",
+        "sender_id": 5,
+        "thread_id": 2,
+        "recipients": [
+            {
+                "email": "ahmed.almansoori@omantel.om",
+                "recipient_type": "to"
+            }
+        ]
+    },
+    {
+        "subject": "Re: Exclusive Offer on iPhone 15 for Omantel Partners",
+        "body": "Dear Zainab,\n\nAbsolutely, I'd be happy to provide more details. We are offering a 15% discount off the retail price for orders above 50 units, and a 20% discount for orders exceeding 100 units. Additionally, we can include accessory bundles at no extra cost for bulk purchases.\n\nI have attached a detailed proposal with all the pricing tiers and package options. Please review it and let me know if you have any questions or if you'd like to proceed with an order.\n\nBest regards,\nAhmed Al-Mansoori\nKey Account Manager, Omantel",
+        "sender_id": 1,
+        "thread_id": 2,
+        "recipients": [
+            {
+                "email": "zainab.almajali@omantel.com",
+                "recipient_type": "to"
+            }
+        ]
+    }
+]

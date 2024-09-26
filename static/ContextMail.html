@@ -109,7 +109,6 @@
             <div class="d-flex align-items-center">
                 <a class="navbar-brand d-flex align-items-center" href="#">
                     <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
-
                     <span class="ms-2">AI SMART LEAD</span>
                 </a>
                 <!-- Navigation Links -->
@@ -297,6 +296,23 @@
                     console.error("Error checking login status:", error);
                 }
             }
+
+            // Add event listener for logout button
+            document.getElementById('logout-button').addEventListener('click', async function() {
+                try {
+                    const response = await fetch('/logout', { method: 'GET' });
+                    const data = await response.json();
+                    if (response.ok) {
+                        alert(data.message); // Show a message on successful logout
+                        window.location.href = "/"; // Redirect to the homepage or login page
+                    } else {
+                        throw new Error(data.detail || "Logout failed");
+                    }
+                } catch (error) {
+                    console.error("Logout failed:", error.message);
+                    alert("An error occurred: " + error.message);
+                }
+            });
 
             // Check login status on page load
             checkLoginStatus();
