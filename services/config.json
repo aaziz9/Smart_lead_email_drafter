@@ -1,0 +1,6 @@
+{
+    "temperature": 0.3,
+    "maxOutputTokens": 100,
+    "topK": 40,
+    "topP": 0.95
+}

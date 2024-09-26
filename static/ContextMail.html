@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <!-- Meta Tags and Title -->
     <meta charset="UTF-8">
@@ -89,6 +88,16 @@
         #spinner {
             display: none;
         }
+
+        .login-alert {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeeba;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -96,24 +105,38 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid d-flex justify-content-between align-items-center">
+            <!-- Left Side: Brand and Navigation Links -->
             <div class="d-flex align-items-center">
                 <a class="navbar-brand d-flex align-items-center" href="#">
                     <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+
                     <span class="ms-2">AI SMART LEAD</span>
                 </a>
+                <!-- Navigation Links -->
                 <div class="navbar-nav ms-3">
                     <a class="nav-link" href="/">Email Drafter</a>
                     <a class="nav-link" href="/ContextMail">Context Mail</a>
                 </div>
             </div>
+            <!-- Right Side: Login/Logout Buttons -->
             <div class="navbar-nav" id="nav-buttons">
-                <button id="logout-button" class="btn btn-custom">Logout</button>
-                <span id="welcome-message" style="margin-left: 15px; color: #ff6900;">Welcome, User!</span>
+                <div class="nav-item d-flex align-items-center">
+                    <a class="nav-link p-0 m-0" href="http://localhost/login">
+                        <button class="btn btn-custom" id="login-button">Login</button>
+                    </a>
+                    <button id="logout-button" class="btn btn-custom" style="display: none;">Logout</button>
+                    <span id="welcome-message" style="display: none; margin-left: 15px; color: #ff6900;">Welcome, User!</span>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <!-- Login Alert for Non-Logged In Users -->
+    <div id="login-alert" class="login-alert" style="display: none;">
+        You need to log in to view and access the emails. Please log in first.
+    </div>
+    <!-- Email Section -->
+    <div class="container mt-4" id="email-section" style="display: none;">
         <h2>Select Email Thread</h2>
         <div class="mb-3">
             <select class="form-select" id="email-thread-dropdown">
@@ -194,6 +217,7 @@
                             emailBody.className = 'email-body';
                             emailCard.appendChild(emailBody);
 
+                            // Display recipients in the card
                             const recipients = document.createElement('p');
                             recipients.className = 'email-recipients';
                             recipients.textContent = 'Recipients: ' + email.recipients.join(', ');
@@ -249,8 +273,34 @@
             // Bind the generate and re-generate buttons
             generateContextButton.addEventListener('click', generateContext);
             regenerateContextButton.addEventListener('click', generateContext);
+
+            // Check login status and update the UI accordingly
+            async function checkLoginStatus() {
+                try {
+                    const response = await fetch('/login_status', { method: 'GET' });
+                    const data = await response.json();
+                    if (data.logged_in) {
+                        document.getElementById('login-button').style.display = 'none';
+                        document.getElementById('logout-button').style.display = 'inline-block';
+                        document.getElementById('welcome-message').style.display = 'inline-block';
+                        document.getElementById('welcome-message').innerText = `Welcome, ${data.user_info.name || 'User'}!`;
+                        document.getElementById('email-section').style.display = 'block'; // Show email section if logged in
+                        document.getElementById('login-alert').style.display = 'none'; // Hide login alert
+                    } else {
+                        document.getElementById('login-button').style.display = 'inline-block';
+                        document.getElementById('logout-button').style.display = 'none';
+                        document.getElementById('welcome-message').style.display = 'none';
+                        document.getElementById('email-section').style.display = 'none'; // Hide email section if not logged in
+                        document.getElementById('login-alert').style.display = 'block'; // Show login alert
+                    }
+                } catch (error) {
+                    console.error("Error checking login status:", error);
+                }
+            }
+
+            // Check login status on page load
+            checkLoginStatus();
         });
     </script>
 </body>
-
 </html>
