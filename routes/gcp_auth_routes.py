@@ -89,6 +89,7 @@ async def auth(request: Request):
 
     # Store the access token in sessions dict for later use
     request.session['token'] = token
+    request.session['user_info'] = user
 
     # return JSONResponse({"user": user, "token": token})
     return RedirectResponse(url="/")
@@ -147,4 +148,4 @@ async def login_status(request: Request):
     token = request.session.get('token')
     if not token:
         return JSONResponse({"logged_in": False})
-    return JSONResponse({"logged_in": True, "user_info": request.session.get('user', {})})
+    return JSONResponse({"logged_in": True, "user_info": request.session.get('user_info', {})})
