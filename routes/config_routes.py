@@ -1,6 +1,9 @@
-from fastapi import APIRouter, Request
-from fastapi.responses import JSONResponse, FileResponse
 import json
+
+from fastapi import APIRouter, Request, Depends
+from fastapi.responses import JSONResponse
+
+from utils.user_utils import get_current_user
 
 
 # Create a router object for the config-related routes
@@ -18,7 +21,7 @@ async def get_config():
 
 
 @config_routes.post("/update_config")
-async def update_config(request: Request):
+async def update_config(request: Request, user_info: dict = Depends(get_current_user)):
     try:
         body = await request.json()
         new_config = {

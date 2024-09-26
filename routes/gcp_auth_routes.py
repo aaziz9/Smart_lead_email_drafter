@@ -89,7 +89,7 @@ async def auth(request: Request):
 
     # Store the access token in sessions dict for later use
     request.session['token'] = token
-    request.session['user_info'] = user
+    request.session['user_info'] = {"name": user.name, "email": user.email}
 
     # return JSONResponse({"user": user, "token": token})
     return RedirectResponse(url="/")
