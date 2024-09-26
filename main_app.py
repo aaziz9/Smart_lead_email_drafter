@@ -7,6 +7,7 @@ from routes.static_files_routes import static_files_router
 from routes.gcp_auth_routes import gcp_router, config
 from routes.gcp_text_bison_routes import gcp_text_bison_router
 from routes.context_mail_v1_routes import context_mail_router
+from routes.config_routes import config_routes  # Import config routes
 
 from db_utils.database_init import Base, engine
 
@@ -24,11 +25,15 @@ app.include_router(gcp_router)
 # Include the GCP text bison-related routes
 app.include_router(gcp_text_bison_router)
 
-# Add URL mappings related to all context mail page related routes
+# Add URL mappings related to all context mail page-related routes
 app.include_router(context_mail_router)
+
+# Include the config routes for editing configurations
+app.include_router(config_routes)
 
 # Add session middleware to manage user sessions
 app.add_middleware(SessionMiddleware, secret_key=config('SECRET_KEY'))
+
 # Mount the static directory to serve static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

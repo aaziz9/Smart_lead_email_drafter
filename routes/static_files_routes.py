@@ -15,3 +15,7 @@ async def email_drafter_page():
 async def context_mail():
     return FileResponse("static/ContextMail.html")
 
+
+@static_files_router.get("/config")
+async def serve_config_page():
+    return FileResponse('static/config.html')
