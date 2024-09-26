@@ -72,10 +72,10 @@
             fetch('/get_config')
             .then(response => response.json())
             .then(data => {
-                document.getElementById('temperature').value = data.parameters.temperature;
-                document.getElementById('max_output_tokens').value = data.parameters.max_output_tokens;
-                document.getElementById('topK').value = data.parameters.topK;
-                document.getElementById('topP').value = data.parameters.topP;
+                document.getElementById('temperature').value = data.temperature;
+                document.getElementById('max_output_tokens').value = data.maxOutputTokens;
+                document.getElementById('topK').value = data.topK;
+                document.getElementById('topP').value = data.topP;
             })
             .catch(error => {
                 console.error('Error:', error);

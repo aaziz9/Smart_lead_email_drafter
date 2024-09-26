@@ -5,10 +5,10 @@ import json
 GCP_TEXT_BISON_MODEL_URL = "https://us-central1-aiplatform.googleapis.com/v1/projects/genz-aismartlead-project/locations/us-central1/publishers/google/models/text-bison:predict"
 
 
-# Function to load configuration from app.config.json
+# Function to load configuration from app_config.json
 def load_config():
     try:
-        with open('app.config.json', 'r') as config_file:
+        with open('./config/app_config.json', 'r') as config_file:
             config = json.load(config_file)
         return config['parameters']
     except FileNotFoundError:
@@ -23,7 +23,7 @@ def get_processed_text_by_text_bison(input_text, action, auth_token):
 
     # Load config parameters
     try:
-        config_params = load_config()  # Load from app.config.json
+        config_params = load_config()  # Load from app_config.json
     except Exception as e:
         response_msg["err_msg"] = str(e)
         response_msg["status"] = 500
