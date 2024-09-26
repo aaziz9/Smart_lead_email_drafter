@@ -11,6 +11,43 @@
             color: #000000;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        .navbar {
+            background-color: #f7f7f7;
+            border-bottom: 2px solid #ff6900;
+        }
+        .navbar-brand, .navbar-nav .nav-link {
+            color: #000000;
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .btn-custom {
+            background-color: #ff6900;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
+            width: 100px;
+            text-align: center;
+            margin: 0 5px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .btn-custom:hover {
+            background-color: #e65a00;
+        }
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-nav .nav-item {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #ff6900;
+        }
         .container {
             margin-top: 50px;
         }
@@ -29,15 +66,44 @@
         }
         /* Reduce input field size for numbers */
         input[type="number"] {
-            width: 25%; /* Reduce size further */
+            width: 25%;
             display: inline-block;
         }
         label {
-            margin-right: 10px; /* Add space between labels and inputs */
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <!-- Left Side: Brand and Navigation Links -->
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+                    <span class="ms-2">AI SMART LEAD</span>
+                </a>
+                <!-- Navigation Links -->
+                <div class="navbar-nav ms-3">
+                    <a class="nav-link" href="/static/index.html">Email Drafter</a>
+                    <a class="nav-link" href="/static/ContextMail.html">Context Mail</a>
+                    <a class="nav-link" href="/config">Edit Configuration</a>
+                </div>
+            </div>
+            <!-- Right Side: Login/Logout Buttons -->
+            <div class="navbar-nav" id="nav-buttons">
+                <div class="nav-item d-flex align-items-center">
+                    <a class="nav-link p-0 m-0" href="/login">
+                        <button class="btn btn-custom" id="login-button">Login</button>
+                    </a>
+                    <button id="logout-button" class="btn btn-custom" style="display: none;">Logout</button>
+                    <span id="welcome-message" style="display: none; margin-left: 15px; color: #ff6900;">Welcome, User!</span>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <!-- Main Container for Editing Configuration -->
     <div class="container">
@@ -62,11 +128,41 @@
             <input type="number" id="topP" class="form-control d-inline" step="0.01" min="0" max="1">
         </div>
 
-        <!-- Save Button with orange style -->
-        <button class="btn btn-custom mt-2" onclick="updateConfig()">Save</button>
+        <!-- Save Button with orange style, hidden by default -->
+        <button id="save-button" class="btn btn-custom mt-2" onclick="updateConfig()" style="display: none;">Save</button>
     </div>
 
     <script>
+        // Check login status and update the UI accordingly
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/login_status', { method: 'GET' });
+                const data = await response.json();
+                if (data.logged_in) {
+                    document.getElementById('login-button').style.display = 'none';
+                    document.getElementById('logout-button').style.display = 'inline-block';
+                    document.getElementById('welcome-message').style.display = 'inline-block';
+                    document.getElementById('welcome-message').innerText = `Welcome, ${data.user_info.name || 'User'}!`;
+
+                    // Show the Save button
+                    document.getElementById('save-button').style.display = 'block';
+
+                } else {
+                    document.getElementById('login-button').style.display = 'inline-block';
+                    document.getElementById('logout-button').style.display = 'none';
+                    document.getElementById('welcome-message').style.display = 'none';
+
+                    // Hide the Save button
+                    document.getElementById('save-button').style.display = 'none';
+                }
+            } catch (error) {
+                console.error("Error checking login status:", error);
+            }
+        }
+
+        // Check login status on page load
+        checkLoginStatus();
+
         // Load current config when the page loads
         document.addEventListener('DOMContentLoaded', function() {
             fetch('/get_config')
@@ -104,7 +200,7 @@
             })
             .then(response => {
                 if (response.status !== 200) {
-                    alert('Unable to save config, please login first !');
+                    alert('Unable to save config, please login first!');
                     throw new Error('Unable to save config, status code: ' + response.status);
                 }
                 return response.json();
@@ -117,6 +213,23 @@
                 console.error('Error:', error);
             });
         }
+
+        // Logout functionality script
+        document.getElementById('logout-button').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/logout', { method: 'GET' });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message); // Show a message on successful logout
+                    window.location.href = "/"; // Redirect to the homepage or login page
+                } else {
+                    throw new Error(data.detail || "Logout failed");
+                }
+            } catch (error) {
+                console.error("Logout failed:", error.message);
+                alert("An error occurred: " + error.message);
+            }
+        });
     </script>
 
     <!-- Bootstrap JS -->
