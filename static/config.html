@@ -72,6 +72,14 @@
         label {
             margin-right: 10px;
         }
+        /* Tooltip ? button */
+        .btn-tooltip {
+            background-color: transparent;
+            border: none;
+            color: #007bff;
+            font-size: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -111,21 +119,25 @@
         <div class="mb-2">
             <label for="temperature">Temperature:</label>
             <input type="number" id="temperature" class="form-control d-inline" step="0.01" min="0" max="1">
+            <button type="button" class="btn-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Controls the randomness of the output. Lower values make the output more deterministic.">?</button>
         </div>
 
         <div class="mb-2">
             <label for="max_output_tokens">Max Output Tokens:</label>
             <input type="number" id="max_output_tokens" class="form-control d-inline" min="1">
+            <button type="button" class="btn-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Limits the maximum number of tokens (words or symbols) the model can generate.">?</button>
         </div>
 
         <div class="mb-2">
             <label for="topK">TopK:</label>
             <input type="number" id="topK" class="form-control d-inline" min="1">
+            <button type="button" class="btn-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Controls diversity by limiting the number of possible next tokens considered.">?</button>
         </div>
 
         <div class="mb-2">
             <label for="topP">TopP:</label>
             <input type="number" id="topP" class="form-control d-inline" step="0.01" min="0" max="1">
+            <button type="button" class="btn-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Controls how many top words are considered for text generation. A higher value gives more creative options, while a lower value focuses on the most likely words.">?</button>
         </div>
 
         <!-- Save Button with orange style, hidden by default -->
@@ -133,6 +145,14 @@
     </div>
 
     <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        });
+
         // Check login status and update the UI accordingly
         async function checkLoginStatus() {
             try {
