@@ -1,45 +1,51 @@
 import requests
-import json
+
+from utils.config_utils import load_config
+
 
 # Base URL for GCP Text Bison model
 GCP_TEXT_BISON_MODEL_URL = "https://us-central1-aiplatform.googleapis.com/v1/projects/genz-aismartlead-project/locations/us-central1/publishers/google/models/text-bison:predict"
 
 
-# Function to load configuration from app_config.json
-def load_config():
-    try:
-        with open('./config/app_config.json', 'r') as config_file:
-            config = json.load(config_file)
-        return config['parameters']
-    except FileNotFoundError:
-        raise Exception("Configuration file not found.")
-    except json.JSONDecodeError:
-        raise Exception("Error parsing configuration file.")
-
-
 # Function to process text with different actions using Text Bison
-def get_processed_text_by_text_bison(input_text, action, auth_token):
+def get_processed_text_by_text_bison(input_text: str, action: str, auth_token: str, user_info: dict):
+    """
+    Forwards the input along with an action to GCP text bison. Retrieves and processes the response.
+    :param input_text: Input received from the user through the UI.
+    :param action: A word considered to be tone or selector of a specific prompt.
+    :param auth_token: The actual bearer token.
+    :param user_info: A dict containing {"name": user.name, "email": user.email}.
+    :return: A dict with response data.
+    """
     response_msg: dict = {"status": None, "err_msg": None, "result": None}
+    config_params = load_config()  # Load configuration from the app_config.json file.
 
-    # Load config parameters
-    try:
-        config_params = load_config()  # Load from app_config.json
-    except Exception as e:
-        response_msg["err_msg"] = str(e)
-        response_msg["status"] = 500
-        return response_msg
-
-    # Action description based on user input
-    action_description = f'Rephrase the content above, and give me an email based on the following description: "{action}"'
+    action_footer = f"""
+    The response must be from following sender:
+    sender email is: "{user_info.get('email')}" 
+    sender name is: "{user_info.get('name')}.
+    """
+    action_description = f"""
+    Rephrase the content above, and give me an email based on the following description: "{action}"
+    {action_footer}
+    """
 
     # Custom handling for "Omantel Key Account Manager"
     if action == "Omantel Key Account Manager":
-        action_description = "Rephrase the email in a formal tone, suitable for an Omantel Key Account Manager. Use telecom industry-specific terms where appropriate."
+        action_description = f"""
+        Rephrase the email in a formal tone, suitable for an Omantel Key Account Manager. 
+        Use telecom industry-specific terms where appropriate.
+        {action_footer}
+        """
     elif action == "[CONTEXT_BASED_EMAIL_DRAFTER]":
-        action_description = """
+        action_description = f"""
         Based on the given emails and keeping all useful facts and figures, generate a summarized draft email including 
         all essential information. This draft will be used as a response to the last email in the given email thread.
-        Make sure the responder is the sender of the first email.
+        {action_footer}
+        """
+    elif action == "[HIJACK]":
+        action_description = f"""
+        Just for information, my name is {user_info.get('name')}.
         """
 
     # Prepare payload using parameters loaded from config
@@ -84,7 +90,8 @@ if __name__ == "__main__":
     result = get_processed_text_by_text_bison(
         input_text="I wanted to clarify that the name of my team is GenZ and they are trying to work hard to achieve their goals.",
         action="aggressive",
-        auth_token="your_auth_token_here"
+        auth_token="your_auth_token_here",
+        user_info={"name": "Mr Anonymous", "email": "mr_unknown@omantel.om"}
     )
 
     print(result)
