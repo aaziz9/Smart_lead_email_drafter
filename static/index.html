@@ -120,7 +120,6 @@
                     <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
                     <span class="ms-2">AI SMART LEAD</span>
                 </a>
-                <!-- Navigation Links -->
                 <div class="navbar-nav ms-3">
                     <div class="nav-item">
                         <a class="nav-link" href="/static/index.html">Email Drafter</a>
@@ -129,7 +128,7 @@
                         <a class="nav-link" href="/static/ContextMail.html">Context Mail</a>
                     </div>
                     <div class="nav-item">
-                        <a class="nav-link" href="/config">Edit Configuration</a> <!-- New Link for Config Page -->
+                        <a class="nav-link" href="/config">Edit Configuration</a>
                     </div>
                 </div>
             </div>
@@ -176,10 +175,13 @@
             </div>
         </div>
 
-        <!-- Custom Action Input -->
+        <!-- Custom Action Input with Add Button -->
         <div class="mb-3">
             <label for="customAction" class="form-label">Custom Action</label>
-            <input type="text" class="form-control output-box" id="customAction" placeholder="Type your custom action here...">
+            <div class="input-group">
+                <input type="text" class="form-control output-box" id="customAction" placeholder="Type your custom action here...">
+                <button id="addCustomAction" class="btn btn-custom" onclick="addCustomAction()">Add Action</button>
+            </div>
         </div>
 
         <!-- Process Button -->
@@ -239,19 +241,43 @@
             element.classList.add('active');
         }
 
+        // Function to add a custom action dynamically
+        function addCustomAction() {
+            const customActionInput = document.getElementById('customAction').value.trim();
+            if (customActionInput) {
+                const actionButtons = document.getElementById('actionButtons');
+
+                // Create a new div for the custom action
+                const customActionDiv = document.createElement('div');
+                customActionDiv.classList.add('action-box');
+                customActionDiv.innerText = customActionInput;
+
+                // Add click event to select the custom action
+                customActionDiv.onclick = function() {
+                    toggleAction(customActionDiv);
+                };
+
+                // Add the new custom action to the action buttons area
+                actionButtons.appendChild(customActionDiv);
+
+                // Clear the custom action input
+                document.getElementById('customAction').value = '';
+            } else {
+                alert('Please enter a valid action.');
+            }
+        }
+
+        // Process request
         async function processRequest() {
-            // Check if the user is logged in
             const loginStatusResponse = await fetch('/login_status', { method: 'GET' });
             const loginStatus = await loginStatusResponse.json();
 
             if (!loginStatus.logged_in) {
-                // Show the error message if the user is not logged in
                 document.getElementById('login-error-message').style.display = 'block';
                 return;
             }
 
-            // If logged in, proceed with processing the request
-            document.getElementById('login-error-message').style.display = 'none'; // Hide the error message if logged in
+            document.getElementById('login-error-message').style.display = 'none';
 
             const emailBody = document.getElementById('emailBody').value;
             const selectedAction = document.querySelector('.action-box.active')?.innerText || '';
@@ -262,7 +288,6 @@
                 action: selectedAction || customAction
             };
 
-            // Show spinner and disable process button
             document.getElementById('spinner').style.display = 'block';
             document.getElementById('process-button').disabled = true;
 
@@ -275,28 +300,27 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(response.statusText); // Handle HTTP errors
+                    throw new Error(response.statusText);
                 }
                 return response.json();
             })
             .then(data => {
                 if (data.error) {
                     document.getElementById('error-message').innerText = `Error: ${data.error}`;
-                    document.getElementById('error-message').style.display = 'block'; // Show error message
+                    document.getElementById('error-message').style.display = 'block';
                     document.getElementById('outputText').value = '';
                 } else {
                     document.getElementById('outputText').value = data["response_msg"];
-                    document.getElementById('error-message').style.display = 'none'; // Hide error message if successful
+                    document.getElementById('error-message').style.display = 'none';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 document.getElementById('error-message').innerText = `Error: Unable to process request (${error.message})`;
-                document.getElementById('error-message').style.display = 'block'; // Show error message
+                document.getElementById('error-message').style.display = 'block';
                 document.getElementById('outputText').value = '';
             })
             .finally(() => {
-                // Hide spinner and enable process button
                 document.getElementById('spinner').style.display = 'none';
                 document.getElementById('process-button').disabled = false;
             });
@@ -308,8 +332,8 @@
                 const response = await fetch('/logout', { method: 'GET' });
                 const data = await response.json();
                 if (response.ok) {
-                    alert(data.message); // Show a message on successful logout
-                    window.location.href = "/"; // Redirect to the homepage or login page
+                    alert(data.message);
+                    window.location.href = "/";
                 } else {
                     throw new Error(data.detail || "Logout failed");
                 }
