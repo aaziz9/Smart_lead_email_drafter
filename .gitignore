@@ -182,3 +182,4 @@ fastapi_*.pid
 # Custom dirs in examples
 example/uploads/
 config/app_config.json
+logs/*.txt
