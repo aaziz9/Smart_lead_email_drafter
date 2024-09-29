@@ -64,3 +64,12 @@ input[type="number"] {
 label {
     margin-right: 10px;
 }
+
+/* Specific styles for tooltips on this configuration page */
+.btn-tooltip {
+    background-color: transparent;
+    border: none;
+    color: #007bff;
+    font-size: 16px;
+    cursor: pointer;
+}
