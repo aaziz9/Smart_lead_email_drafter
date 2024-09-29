@@ -109,13 +109,15 @@
             <div class="d-flex align-items-center">
                 <a class="navbar-brand d-flex align-items-center" href="#">
                     <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
-
                     <span class="ms-2">AI SMART LEAD</span>
                 </a>
                 <!-- Navigation Links -->
                 <div class="navbar-nav ms-3">
                     <a class="nav-link" href="/">Email Drafter</a>
                     <a class="nav-link" href="/ContextMail">Context Mail</a>
+                    <div class="nav-item">
+                        <a class="nav-link" href="/config">Edit Configuration</a>
+                    </div>
                 </div>
             </div>
             <!-- Right Side: Login/Logout Buttons -->
@@ -175,6 +177,7 @@
             const regenerateContextButton = document.getElementById('regenerate-context');
             const spinner = document.getElementById('spinner');
             const responseTextarea = document.getElementById('response-textarea');
+            const logoutButton = document.getElementById('logout-button');
             let selectedThreadId = null;
 
             // Fetch the email threads when the dropdown is clicked
@@ -300,6 +303,22 @@
 
             // Check login status on page load
             checkLoginStatus();
+
+            // Logout functionality
+            logoutButton.addEventListener('click', async function() {
+                try {
+                    const response = await fetch('/logout', { method: 'GET' });
+                    if (response.ok) {
+                        alert('Logged out successfully.');
+                        window.location.href = '/'; // Redirect to the homepage or login page
+                    } else {
+                        throw new Error('Logout failed');
+                    }
+                } catch (error) {
+                    console.error('Error during logout:', error);
+                    alert('An error occurred during logout.');
+                }
+            });
         });
     </script>
 </body>
