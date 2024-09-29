@@ -71,6 +71,7 @@
             border: 1px solid #ff6900;
             border-radius: 5px;
         }
+        /* Existing alert styles (used elsewhere) */
         .alert {
             padding: 10px;
             margin-bottom: 15px;
@@ -81,6 +82,16 @@
             color: #a94442;
             background-color: #f2dede;
             border-color: #ebccd1;
+        }
+        /* Added .login-alert CSS class */
+        .login-alert {
+            background-color: #fff3cd;
+            color: #856404;
+            border-color: #ffeeba;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
         }
         .spinner-border {
             width: 3rem;
@@ -135,8 +146,13 @@
         </div>
     </nav>
 
+    <!-- Login Alert for Non-Logged In Users -->
+    <div id="login-alert" class="login-alert" style="display: none;">
+        You need to log in to use the Email Drafter. Please log in first.
+    </div>
+
     <!-- Main Container -->
-    <div class="container mt-4">
+    <div class="container mt-4" id="email-drafter-section" style="display: none;">
         <!-- Error Message Container -->
         <div id="error-message" class="alert alert-danger" style="display: none;"></div>
 
@@ -198,10 +214,14 @@
                     document.getElementById('logout-button').style.display = 'inline-block';
                     document.getElementById('welcome-message').style.display = 'inline-block';
                     document.getElementById('welcome-message').innerText = `Welcome, ${data.user_info.name || 'User'}!`;
+                    document.getElementById('email-drafter-section').style.display = 'block'; // Show email drafter section if logged in
+                    document.getElementById('login-alert').style.display = 'none'; // Hide login alert
                 } else {
                     document.getElementById('login-button').style.display = 'inline-block';
                     document.getElementById('logout-button').style.display = 'none';
                     document.getElementById('welcome-message').style.display = 'none';
+                    document.getElementById('email-drafter-section').style.display = 'none'; // Hide email drafter section if not logged in
+                    document.getElementById('login-alert').style.display = 'block'; // Show login alert
                 }
             } catch (error) {
                 console.error("Error checking login status:", error);
