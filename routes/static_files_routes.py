@@ -10,10 +10,10 @@ async def email_drafter_page():
     return FileResponse("static/index.html")
 
 
-# Route for ContextMail.html
-@static_files_router.get("/ContextMail")
+# Route for context_mail.html
+@static_files_router.get("/context_mail")
 async def context_mail():
-    return FileResponse("static/ContextMail.html")
+    return FileResponse("static/context_mail.html")
 
 
 @static_files_router.get("/config")

@@ -1,6 +1,6 @@
 {
     "parameters": {
-        "temperature": 0.4,
+        "temperature": 0.3,
         "max_output_tokens": 512,
         "topK": 40,
         "topP": 0.95
