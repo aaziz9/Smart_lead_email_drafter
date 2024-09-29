@@ -9,16 +9,17 @@ from sqlalchemy.orm import Session
 from services.text_bison_service import get_processed_text_by_text_bison
 from services.context_mail_service import get_emails_in_curr_thread
 from db_utils.database_init import get_db
-
+from utils.user_utils import get_current_user
 
 gcp_text_bison_router = APIRouter()
 
 
 @gcp_text_bison_router.post("/get_processed_text")
-async def get_processed_text(request: Request):
+async def get_processed_text(request: Request, user_info: dict = Depends(get_current_user)):
     """
-    Your custom API endpoint to fetch results from GCP for any allowed GCP services
-    :param request:
+    Your custom API endpoint to fetch results from GCP for any allowed GCP services.
+    :param user_info: Contains user information fetched from the GCP ID token.
+    :param request: Request object received from the client.
     :return:
     """
     token = request.session.get('token')
