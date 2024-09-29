@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
+from utils.logging_utils import logger_instance
+
 from starlette.middleware.sessions import SessionMiddleware
 
 from routes.static_files_routes import static_files_router
@@ -31,14 +33,18 @@ app.include_router(context_mail_router)
 # Include the config routes for editing configurations
 app.include_router(config_routes)
 
+logger_instance.info("Included all URL Mappings")
+
 # Add session middleware to manage user sessions
 app.add_middleware(SessionMiddleware, secret_key=config('SECRET_KEY'))
 
 # Mount the static directory to serve static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
+logger_instance.info("Initialized static files")
 
 # Create all tables in the database
 Base.metadata.create_all(bind=engine)
+logger_instance.info("Configured Database Successfully!")
 
 if __name__ == "__main__":
     import uvicorn

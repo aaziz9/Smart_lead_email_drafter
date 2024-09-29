@@ -1,6 +1,7 @@
 import requests
 
 from utils.config_utils import load_config
+from utils.logging_utils import logger_instance
 
 
 # Base URL for GCP Text Bison model
@@ -71,6 +72,8 @@ def get_processed_text_by_text_bison(input_text: str, action: str, auth_token: s
         }
     }
 
+    logger_instance.info("Prepared the prompt and text bison config.")
+
     headers = {
         'Authorization': f'Bearer {auth_token}',
         'Content-Type': 'application/json'
@@ -79,13 +82,18 @@ def get_processed_text_by_text_bison(input_text: str, action: str, auth_token: s
     try:
         # Make the request to the GCP Text Bison model
         response = requests.post(url=GCP_TEXT_BISON_MODEL_URL, headers=headers, json=payload)
+        logger_instance.info("Sent a POST request to text bison.")
+
         response_msg["status"] = response.status_code
+        logger_instance.info(f"Received response code {response.status_code}")
 
         if response.status_code != 200:
             response_msg["err_msg"] = response.text
         else:
             response_dict = response.json()
             response_msg["result"] = " ".join([prediction["content"] for prediction in response_dict["predictions"]])
+
+        logger_instance.info(f"Response prepared successfully.")
 
     except requests.exceptions.RequestException as e:
         response_msg["err_msg"] = f"Request failed: {str(e)}"
