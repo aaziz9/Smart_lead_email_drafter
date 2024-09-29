@@ -20,14 +20,21 @@ def get_processed_text_by_text_bison(input_text: str, action: str, auth_token: s
     response_msg: dict = {"status": None, "err_msg": None, "result": None}
     config_params = load_config()  # Load configuration from the app_config.json file.
 
-    action_footer = f"""
-    The response must be from following sender:
+    email_sender_info_prompt = f"""
+    The generated email response will be from the following sender:
     sender email is: "{user_info.get('email')}" 
     sender name is: "{user_info.get('name')}.
     """
+
+    email_receiver_info_prompt = """
+    Identify the receiver's name from the first email content.
+    The receiver's name is usually present after "Dear" or in the first few words of the email body.
+    The receiver's name should not be the same as the sender name as mentioned in the first email content.
+    """
+
     action_description = f"""
     Rephrase the content above, and give me an email based on the following description: "{action}"
-    {action_footer}
+    {email_sender_info_prompt}
     """
 
     # Custom handling for "Omantel Key Account Manager"
@@ -35,13 +42,14 @@ def get_processed_text_by_text_bison(input_text: str, action: str, auth_token: s
         action_description = f"""
         Rephrase the email in a formal tone, suitable for an Omantel Key Account Manager. 
         Use telecom industry-specific terms where appropriate.
-        {action_footer}
+        {email_sender_info_prompt}
         """
     elif action == "[CONTEXT_BASED_EMAIL_DRAFTER]":
         action_description = f"""
         Based on the given emails and keeping all useful facts and figures, generate a summarized draft email including 
         all essential information. This draft will be used as a response to the last email in the given email thread.
-        {action_footer}
+        {email_sender_info_prompt}
+        {email_receiver_info_prompt}
         """
     elif action == "[HIJACK]":
         action_description = f"""
