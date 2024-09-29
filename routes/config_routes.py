@@ -13,7 +13,7 @@ config_routes = APIRouter()
 @config_routes.get("/get_config")
 async def get_config():
     try:
-        with open('./app_config.json', 'r') as config_file:
+        with open('./config/app_config.json', 'r') as config_file:
             config = json.load(config_file)
         return JSONResponse(content=config, status_code=200)
     except FileNotFoundError:
@@ -32,7 +32,7 @@ async def update_config(request: Request, user_info: dict = Depends(get_current_
                 "topP": body.get("topP")
             }
         }
-        with open('./app_config.json', 'w') as config_file:
+        with open('./config/app_config.json', 'w') as config_file:
             json.dump(new_config, config_file, indent=4)
         return JSONResponse(content={"message": "Configuration updated successfully!"}, status_code=200)
     except Exception as e:
