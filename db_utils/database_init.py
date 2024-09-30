@@ -1,7 +1,12 @@
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "sqlite:///./data/sqlite_db.db"
+
+# The relative DB path is different when this script is run as the main script
+if __name__ == "__main__":
+    DATABASE_URL = "sqlite:///../data/sqlite_db.db"
+else:
+    DATABASE_URL = "sqlite:///./data/sqlite_db.db"  # This path will be used when main app imports this script
 
 # Create the SQLite database engine
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -50,7 +55,10 @@ if __name__ == "__main__":
         # Create email threads
         email_thread1 = email_thread_model.EmailThread(title="Partnership Opportunities with Omantel")
         email_thread2 = email_thread_model.EmailThread(title="Exclusive Offer on iPhone 15 for Omantel Partners")
-        db.add_all([email_thread1, email_thread2])
+        email_thread3 = email_thread_model.EmailThread(title="New Collaboration Initiative")  # New thread
+        email_thread4 = email_thread_model.EmailThread(title="Inquiry about Omantel Services")  # New thread
+        email_thread5 = email_thread_model.EmailThread(title="Feedback on Recent Meeting")  # New thread
+        db.add_all([email_thread1, email_thread2, email_thread3, email_thread4, email_thread5])
         db.commit()
 
         # Insert dummy emails between Ahmed and Maryam
@@ -175,7 +183,90 @@ if __name__ == "__main__":
                                    sender_id=1,
                                    thread_id=2)
 
-        db.add_all([email1, email2, email3, email4, email5, email6, email7, email8])
+        # Insert dummy emails between Abdulaziz and Basma
+        email9 = email_model.Email(subject="New Collaboration Initiative",
+                                   body="""
+                                   Dear Basma,
+                                   
+                                   I hope this email finds you well. I'm reaching out to discuss a potential collaboration between our departments. I believe combining our resources could lead to a 30% increase in efficiency based on last quarter's performance metrics.
+                                   
+                                   Would you be available to meet next week to explore this idea further?
+                                   
+                                   Best regards,
+                                   Abdulaziz Al-Busaidi
+                                   Project Manager, Omantel
+                                   """,
+                                   sender_id=6,
+                                   thread_id=3)
+
+        email10 = email_model.Email(subject="Re: New Collaboration Initiative",
+                                    body="""
+                                    Dear Abdulaziz,
+                                    
+                                    Thank you for your email. Your proposal sounds interesting, and I agree that collaboration could be beneficial. I'm available on Wednesday at 2 PM. Let me know if that works for you.
+                                    
+                                    Best,
+                                    Basma Al-Saadi
+                                    """,
+                                    sender_id=2,
+                                    thread_id=3)
+
+        email11 = email_model.Email(subject="Inquiry about Omantel Services",
+                                    body="""
+                                    Dear Basma,
+                                    
+                                    I'm considering upgrading our team's communication tools and wanted to inquire about the latest Omantel services that could support this initiative. Specifically, I'm interested in solutions that offer enhanced security features.
+                                    
+                                    Could you provide some information on this?
+                                    
+                                    Regards,
+                                    Abdulaziz Al-Busaidi
+                                    """,
+                                    sender_id=6,
+                                    thread_id=4)
+
+        email12 = email_model.Email(subject="Re: Inquiry about Omantel Services",
+                                    body="""
+                                    Dear Abdulaziz,
+                                    
+                                    Certainly! We have recently launched a new suite of services that might fit your needs. I'll send over the details and we can set up a meeting to discuss them further.
+                                    
+                                    Best,
+                                    Basma Al-Saadi
+                                    """,
+                                    sender_id=2,
+                                    thread_id=4)
+
+        email13 = email_model.Email(subject="Feedback on Recent Meeting",
+                                    body="""
+                                    Dear Basma,
+                                    
+                                    I wanted to provide some feedback on our recent meeting. The insights you provided were very helpful, and I believe implementing those strategies could lead to significant improvements.
+                                    
+                                    Let's keep the communication open as we move forward.
+                                    
+                                    Best regards,
+                                    Abdulaziz Al-Busaidi
+                                    """,
+                                    sender_id=6,
+                                    thread_id=5)
+
+        email14 = email_model.Email(subject="Re: Feedback on Recent Meeting",
+                                    body="""
+                                    Dear Abdulaziz,
+                                    
+                                    Thank you for your feedback. I'm glad you found the meeting productive. I look forward to seeing the positive changes we can achieve together.
+                                    
+                                    Best,
+                                    Basma Al-Saadi
+                                    """,
+                                    sender_id=2,
+                                    thread_id=5)
+
+        db.add_all([
+            email1, email2, email3, email4, email5, email6, email7, email8,
+            email9, email10, email11, email12, email13, email14
+        ])
         db.commit()
 
         # Add recipients to the emails
@@ -189,7 +280,17 @@ if __name__ == "__main__":
         recipient7 = email_recipient_model.EmailRecipient(email_id=7, recipient_id=1, recipient_type="to")
         recipient8 = email_recipient_model.EmailRecipient(email_id=8, recipient_id=5, recipient_type="to")
 
-        db.add_all([recipient1, recipient2, recipient3, recipient4, recipient5, recipient6, recipient7, recipient8])
+        recipient9 = email_recipient_model.EmailRecipient(email_id=9, recipient_id=2, recipient_type="to")
+        recipient10 = email_recipient_model.EmailRecipient(email_id=10, recipient_id=6, recipient_type="to")
+        recipient11 = email_recipient_model.EmailRecipient(email_id=11, recipient_id=2, recipient_type="to")
+        recipient12 = email_recipient_model.EmailRecipient(email_id=12, recipient_id=6, recipient_type="to")
+        recipient13 = email_recipient_model.EmailRecipient(email_id=13, recipient_id=2, recipient_type="to")
+        recipient14 = email_recipient_model.EmailRecipient(email_id=14, recipient_id=6, recipient_type="to")
+
+        db.add_all([
+            recipient1, recipient2, recipient3, recipient4, recipient5, recipient6, recipient7, recipient8,
+            recipient9, recipient10, recipient11, recipient12, recipient13, recipient14
+        ])
         db.commit()
 
         print("Dummy data inserted successfully!")
