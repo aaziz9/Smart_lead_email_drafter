@@ -38,7 +38,11 @@ if __name__ == "__main__":
         user3 = user_model.User(name="Maryam", email="maryam.almamari@oreedo.com")
         user4 = user_model.User(name="Ali", email="ali.aziz@oreedo.com")
         user5 = user_model.User(name="Zainab", email="zainab.almajali@omantel.com")
-        user6 = user_model.User(name="Mohammad", email="mohammad.alawati@oreedo.com")
+        user6 = user_model.User(name="Abdulaziz", email="71528@omantel.om")
+        user7 = user_model.User(name="Ghaida", email="ghaidaafarsi96@gmail.com")
+        user8 = user_model.User(name="Hiba", email="hibaalsarmi55@gmail.com")
+        user9 = user_model.User(name="Sughiya", email="hitiee97@gmail.com")
+        user10 = user_model.User(name="Lujain", email="71548@omantel.om")
 
         db.add_all([user1, user2, user3, user4, user5, user6])
         db.commit()
@@ -55,21 +59,21 @@ if __name__ == "__main__":
                                    """ 
                                    Dear Maryam,
                                     
-                                   I hope this message finds you well. My name is Ahmed Al-Mansoori, and I am the Key Account Manager at Omantel. I wanted to reach out to discuss how we can further enhance our partnership and support your business needs.
+                                   I hope this message finds you well. My name is Atyab, and I am the Key Account Manager at Omantel. I wanted to reach out to discuss how we can further enhance our partnership and support your business needs.
                                    Last quarter, we saw a significant increase in service adoption, with a 25% growth in our customer base and a 15% increase in sales for our premium packages. I believe there are more opportunities we can explore together.
                                    Could we schedule a time to discuss this further? I look forward to hearing from you.
                                    
                                    Best regards,
-                                   Ahmed Al-Mansoori
+                                   Syed Atyab Hussain
                                    Key Account Manager, Omantel
                                    +968 1234 5678
-                                   ahmed.almansoori@omantel.om
+                                   syed.atyab.hussain@gmail.com
                                    """,
                                    sender_id=1,
                                    thread_id=1)
         email2 = email_model.Email(subject="Re: Partnership Opportunities with Omantel",
                                    body="""
-                                   Dear Ahmed,
+                                   Dear Atyab,
                                    Thank you for reaching out. I appreciate your interest in enhancing our partnership. The growth numbers sound promising! I am available for a call on Tuesday, October 3rd, at 10:00 AM if that works for you.
                                    Looking forward to our discussion.
                                    
@@ -88,14 +92,14 @@ if __name__ == "__main__":
                                    In preparation for our discussion, I will have some detailed sales reports showing how our recent initiatives contributed to a 10% revenue increase. Please let me know if there are specific areas you would like to focus on.
                                    
                                    Best regards,
-                                   Ahmed Al-Mansoori
+                                   Syed Atyab Hussain
                                    Key Account Manager, Omantel
                                    """,
                                    sender_id=1,
                                    thread_id=1)
         email4 = email_model.Email(subject="Re: Partnership Opportunities with Omantel",
                                    body="""
-                                   Dear Ahmed,
+                                   Dear Atyab,
                                    
                                    Thank you for confirming the meeting. I would like to focus on the following points during our call:
                                    
@@ -118,13 +122,13 @@ if __name__ == "__main__":
                                    If you have any additional thoughts in the meantime, please feel free to share.
                                    
                                    Best regards,
-                                   Ahmed Al-Mansoori
+                                   Syed Atyab Hussain
                                    Key Account Manager, Omantel
                                    """,
                                    sender_id=1,
                                    thread_id=1)
 
-        # Insert dummy emails between Ahmed and Zainab
+        # Insert dummy emails between Atyab and Zainab
         email6 = email_model.Email(subject="Exclusive Offer on iPhone 15 for Omantel Partners",
                                    body="""
                                    Dear Zainab,
@@ -133,17 +137,17 @@ if __name__ == "__main__":
                                    Given the high demand, I'd recommend placing orders early to ensure availability. Please let me know if you're interested, and we can discuss the details.
                                    
                                    Best regards,
-                                   Ahmed Al-Mansoori
+                                   Syed Atyab Hussain
                                    Key Account Manager, Omantel
                                    +968 1234 5678
-                                   ahmed.almansoori@omantel.om
+                                   syed.atyab.hussain@gmail.com
                                    """,
                                    sender_id=1,
                                    thread_id=2)
 
         email7 = email_model.Email(subject="Re: Exclusive Offer on iPhone 15 for Omantel Partners",
                                    body="""
-                                   Dear Ahmed,
+                                   Dear Atyab,
                                    
                                    Thank you for reaching out with this offer. The new iPhone 15 sounds like a great opportunity. Could you please provide more details on the pricing and the quantities available? Also, are there any bundle packages if we purchase in bulk?
                                    
@@ -165,7 +169,7 @@ if __name__ == "__main__":
                                    I have attached a detailed proposal with all the pricing tiers and package options. Please review it and let me know if you have any questions or if you'd like to proceed with an order.
                                    
                                    Best regards,
-                                   Ahmed Al-Mansoori
+                                   Syed Atyab Hussain
                                    Key Account Manager, Omantel
                                    """,
                                    sender_id=1,

@@ -48,7 +48,8 @@ def get_processed_text_by_text_bison(input_text: str, action: str, auth_token: s
     elif action == "[CONTEXT_BASED_EMAIL_DRAFTER]":
         action_description = f"""
         Based on the given emails and keeping all useful facts and figures, generate a summarized draft email including 
-        all essential information. This draft will be used as a response to the last email in the given email thread.
+        all essential information. This draft will be from the sender, and would continue conversation left in the 
+        last email in the given email thread.
         {email_sender_info_prompt}
         {email_receiver_info_prompt}
         """
