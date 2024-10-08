@@ -10,7 +10,7 @@ from utils.user_utils import get_current_user
 config_routes = APIRouter()
 
 
-@config_routes.get("/get_config")
+@config_routes.get("/get_config", tags=["Text Bison Config"])
 async def get_config():
     try:
         with open('./config/app_config.json', 'r') as config_file:
@@ -20,7 +20,7 @@ async def get_config():
         return JSONResponse(content={"error": "Configuration file not found."}, status_code=500)
 
 
-@config_routes.post("/update_config")
+@config_routes.post("/update_config", tags=["Text Bison Config"])
 async def update_config(request: Request, user_info: dict = Depends(get_current_user)):
     try:
         body = await request.json()
