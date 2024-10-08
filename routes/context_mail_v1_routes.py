@@ -9,26 +9,26 @@ from utils.user_utils import get_current_user
 from models.user_model import User
 from models.email_model import Email
 from models.email_thread_model import EmailThread
-from services.context_mail_service import get_emails_in_curr_thread
+from services.gcp_context_mail_service import get_emails_in_curr_thread
 
 
 context_mail_router = APIRouter()
 
 
-@context_mail_router.get("/context_mail/v1/users")
+@context_mail_router.get("/context_mail/v1/users", tags=["Context Mail Users"])
 async def get_users(db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     fetched_users = db.query(User).all()
     return JSONResponse(status_code=200, content={"data": [user.email for user in fetched_users]})
 
 
-@context_mail_router.get("/context_mail/v1/users/{user_id}")
+@context_mail_router.get("/context_mail/v1/users/{user_id}", tags=["Context Mail Users"])
 async def get_user(user_id: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     fetched_user = db.query(User).filter(User.id == user_id).first()
     response_data = {"id": fetched_user.id, "email": fetched_user.email, "name": fetched_user.name} if fetched_user else {}
     return JSONResponse(status_code=200 if fetched_user else 404, content={"data": response_data})
 
 
-@context_mail_router.get("/context_mail/v1/emails")
+@context_mail_router.get("/context_mail/v1/emails", tags=["Context Mail Users"])
 async def get_emails(db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     fetched_emails = db.query(Email).all()
     return JSONResponse(status_code=200,
@@ -38,7 +38,7 @@ async def get_emails(db: Session = Depends(get_db), user_info: dict = Depends(ge
                         ]})
 
 
-@context_mail_router.get("/context_mail/v1/emails/{sender_id}")
+@context_mail_router.get("/context_mail/v1/emails/{sender_id}", tags=["Context Mail Users"])
 async def get_emails_from_a_sender(sender_id: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     fetched_emails = db.query(Email).filter(Email.sender_id == sender_id).all()
     return JSONResponse(status_code=200, content={"data": [
@@ -47,7 +47,7 @@ async def get_emails_from_a_sender(sender_id: int, db: Session = Depends(get_db)
                         ]})
 
 
-@context_mail_router.get("/context_mail/v1/email_threads")
+@context_mail_router.get("/context_mail/v1/email_threads", tags=["Context Mail Users"])
 async def get_email_threads(db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     fetched_email_threads = db.query(EmailThread).all()
     return JSONResponse(
@@ -57,7 +57,7 @@ async def get_email_threads(db: Session = Depends(get_db), user_info: dict = Dep
     )
 
 
-@context_mail_router.get("/context_mail/v2/email_threads")
+@context_mail_router.get("/context_mail/v2/email_threads", tags=["Context Mail Users"])
 async def get_email_threads_for_curr_user(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     # Get the logged-in user's email from the session
     user_email = request.session.get("user_info", {}).get("email")
@@ -83,7 +83,7 @@ async def get_email_threads_for_curr_user(request: Request, db: Session = Depend
     )
 
 
-@context_mail_router.get("/context_mail/v1/email_threads/{thread_id}/emails")
+@context_mail_router.get("/context_mail/v1/email_threads/{thread_id}/emails", tags=["Context Mail Users"])
 async def get_emails_in_thread(thread_id: int, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     try:
         emails_in_curr_thread = get_emails_in_curr_thread(thread_id=thread_id, db_pointer=db)

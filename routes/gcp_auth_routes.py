@@ -47,6 +47,7 @@ oauth.register(
     client_kwargs={
         'scope': ' '.join(["https://www.googleapis.com/auth/userinfo.profile",
                            "https://www.googleapis.com/auth/userinfo.email",
+                           "https://www.googleapis.com/auth/gmail.readonly",
                            "https://www.googleapis.com/auth/generative-language.tuning",
                            "https://www.googleapis.com/auth/generative-language.retriever",
                            "https://www.googleapis.com/auth/cloud-platform"]),
@@ -55,7 +56,7 @@ oauth.register(
 )
 
 
-@gcp_router.get("/login")
+@gcp_router.get("/login", include_in_schema=False)
 async def login(request: Request):
     """
     :param request: Request object containing data related to the incoming request.
@@ -70,7 +71,7 @@ async def login(request: Request):
     return await oauth.google.authorize_redirect(request, config('REDIRECT_URI'), nonce=request.session['nonce'])
 
 
-@gcp_router.get("/auth")
+@gcp_router.get("/auth", include_in_schema=False)
 async def auth(request: Request):
     """
     :param request: The request made by the client (browser) in response to a redirect response made by GCP
@@ -95,7 +96,7 @@ async def auth(request: Request):
     return RedirectResponse(url="/")
 
 
-@gcp_router.get("/refresh_token")
+@gcp_router.get("/refresh_token", include_in_schema=False)
 async def refresh_token(request: Request):
     """
     When the access token expires, this method can get a new access token.
@@ -130,7 +131,7 @@ async def refresh_token(request: Request):
     return JSONResponse({"new_token": new_token})
 
 
-@gcp_router.get("/logout")
+@gcp_router.get("/logout", include_in_schema=False)
 async def logout(request: Request):
     """
     Logs the user out by clearing the session data.
@@ -143,7 +144,7 @@ async def logout(request: Request):
 
 
 # Check if the user is logged in
-@gcp_router.get("/login_status")
+@gcp_router.get("/login_status", tags=["User Authorization"])
 async def login_status(request: Request):
     token = request.session.get('token')
     if not token:
