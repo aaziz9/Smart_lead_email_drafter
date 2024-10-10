@@ -17,7 +17,7 @@
             <div class="d-flex align-items-center">
                 <a class="navbar-brand d-flex align-items-center" href="#">
                     <img src="/static/images/omantel_logo.png" alt="Logo" style="height: 40px; margin-right: 10px;">
-                    <span class="ms-2">AI SMART LEAD</span>
+                    <span id="ai-smart-lead-title" class="ms-2">AI SMART LEAD</span>
                 </a>
                 <!-- Navigation Links -->
                 <div class="navbar-nav ms-3">
@@ -69,6 +69,12 @@
         <!-- Save Button with orange style, hidden by default -->
         <button id="save-button" class="btn btn-custom mt-2" onclick="updateConfig()" style="display: none;">Save</button>
     </div>
+
+    <script>
+        document.getElementById("ai-smart-lead-title").addEventListener("click", (event) => {
+            window.location.href = "/docs";
+        });
+    </script>
 
     <script>
         // Initialize tooltips

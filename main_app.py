@@ -37,9 +37,9 @@ applications.get_swagger_ui_html = swagger_monkey_patch
 
 
 app = FastAPI(
-    title="AI Smart Lead",
+    title="AI Smart Lead API",
     description="Uses GCP Vertex AI (Text Bison) to understand the natural language and give required insights.",
-    version="1.0.2"
+    version="1.0.3"
 )
 
 
