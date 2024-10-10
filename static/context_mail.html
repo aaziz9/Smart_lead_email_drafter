@@ -20,7 +20,7 @@
             <div class="d-flex align-items-center">
                 <a class="navbar-brand d-flex align-items-center" href="#">
                     <img src="/static/images/omantel_logo.png" alt="Logo" style="height: 40px; margin-right: 10px;">
-                    <span class="ms-2">AI SMART LEAD</span>
+                    <span id="ai-smart-lead-title" class="ms-2">AI SMART LEAD</span>
                 </a>
 
                 <!-- Navigation Links -->
@@ -86,6 +86,12 @@
     <!-- Bootstrap JS and dependencies -->
     <script src="/static/js/jquery-3.6.0.min.js"></script>
     <script src="/static/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.getElementById("ai-smart-lead-title").addEventListener("click", (event) => {
+            window.location.href = "/docs";
+        });
+    </script>
 
     <!-- JavaScript to handle dropdown actions, fetch requests, and context generation -->
     <script>
