@@ -23,7 +23,7 @@ gcp_router = APIRouter()
 config_data = {
     'GOOGLE_CLIENT_ID': os.getenv('GOOGLE_CLIENT_ID'),
     'GOOGLE_CLIENT_SECRET': os.getenv('GOOGLE_CLIENT_SECRET'),
-    'REDIRECT_URI': 'http://localhost/auth',
+    'REDIRECT_URI': os.getenv('GOOGLE_AUTH_REDIRECT_URI', 'http://localhost/auth'),
     'SECRET_KEY':  secrets.token_hex(32)  # This is for session management
 }
 config = Config(environ=config_data)
