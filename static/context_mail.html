@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Drafter</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom Styles -->
     <link rel="stylesheet" href="/static/css/context_mail.css">
 </head>
@@ -19,7 +19,7 @@
             <!-- Left Side: Brand and Navigation Links -->
             <div class="d-flex align-items-center">
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                    <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+                    <img src="/static/images/omantel_logo.png" alt="Logo" style="height: 40px; margin-right: 10px;">
                     <span class="ms-2">AI SMART LEAD</span>
                 </a>
 
@@ -42,7 +42,7 @@
             <!-- Right Side: Login/Logout Buttons -->
             <div class="navbar-nav" id="nav-buttons">
                 <div class="nav-item d-flex align-items-center">
-                    <a class="nav-link p-0 m-0" href="http://localhost/login">
+                    <a class="nav-link p-0 m-0" href="/login">
                         <button class="btn btn-custom" id="login-button">Login</button>
                     </a>
                     <button id="logout-button" class="btn btn-custom" style="display: none;">Logout</button>
@@ -84,8 +84,8 @@
     </div>
 
     <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
 
     <!-- JavaScript to handle dropdown actions, fetch requests, and context generation -->
     <script>
@@ -102,7 +102,7 @@
             // Fetch the email threads when the dropdown is clicked
             emailThreadDropdown.addEventListener('click', function () {
                 if (emailThreadDropdown.options.length === 1) { // Only fetch if not already fetched
-                    fetch('http://localhost/context_mail/v2/email_threads')
+                    fetch(`http://${window.location.host}/context_mail/v2/email_threads`)
                         .then(response => response.json())
                         .then(data => {
                             data.data.forEach(thread => {
@@ -119,7 +119,7 @@
             // Handle selection of email thread
             emailThreadDropdown.addEventListener('change', function () {
                 selectedThreadId = emailThreadDropdown.value;
-                const apiUrl = `http://localhost/context_mail/v1/email_threads/${selectedThreadId}/emails`;
+                const apiUrl = `http://${window.location.host}/context_mail/v1/email_threads/${selectedThreadId}/emails`;
 
                 // Fetch emails for the selected thread
                 fetch(apiUrl)
@@ -174,7 +174,7 @@
                     return;
                 }
 
-                const contextApiUrl = `http://localhost/text_bison/v1/context_generator/${selectedThreadId}`;
+                const contextApiUrl = `http://${window.location.host}/text_bison/v1/context_generator/${selectedThreadId}`;
                 responseTextarea.value = ''; // Clear previous response
                 spinner.style.display = 'block'; // Show spinner
 
