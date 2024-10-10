@@ -213,7 +213,7 @@
                 document.getElementById('spinner').style.display = 'block';
                 document.getElementById('process-button').disabled = true;
 
-                fetch(`http://${window.location.host}/get_processed_text`, {
+                fetch(`${window.location.protocol}//${window.location.host}/get_processed_text`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
