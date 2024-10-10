@@ -108,7 +108,7 @@
             // Fetch the email threads when the dropdown is clicked
             emailThreadDropdown.addEventListener('click', function () {
                 if (emailThreadDropdown.options.length === 1) { // Only fetch if not already fetched
-                    fetch(`http://${window.location.host}/context_mail/v2/email_threads`)
+                    fetch(`${window.location.protocol}//${window.location.host}/context_mail/v2/email_threads`)
                         .then(response => response.json())
                         .then(data => {
                             data.data.forEach(thread => {
@@ -125,7 +125,7 @@
             // Handle selection of email thread
             emailThreadDropdown.addEventListener('change', function () {
                 selectedThreadId = emailThreadDropdown.value;
-                const apiUrl = `http://${window.location.host}/context_mail/v1/email_threads/${selectedThreadId}/emails`;
+                const apiUrl = `${window.location.protocol}//${window.location.host}/context_mail/v1/email_threads/${selectedThreadId}/emails`;
 
                 // Fetch emails for the selected thread
                 fetch(apiUrl)
@@ -180,7 +180,7 @@
                     return;
                 }
 
-                const contextApiUrl = `http://${window.location.host}/text_bison/v1/context_generator/${selectedThreadId}`;
+                const contextApiUrl = `${window.location.protocol}//${window.location.host}/text_bison/v1/context_generator/${selectedThreadId}`;
                 responseTextarea.value = ''; // Clear previous response
                 spinner.style.display = 'block'; // Show spinner
 
