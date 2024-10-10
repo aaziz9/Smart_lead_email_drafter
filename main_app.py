@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, applications
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.staticfiles import StaticFiles
 
 from utils.logging_utils import logger_instance
@@ -18,7 +19,28 @@ from db_utils.database_init import Base, engine
 from models import user_model, email_thread_model, email_model, email_recipient_model
 
 
-app = FastAPI()
+def swagger_monkey_patch(*args, **kwargs):
+    """
+    Wrap the function which is generating the HTML for the /docs endpoint and
+    overwrite the default values for the swagger js and css.
+    """
+    return get_swagger_ui_html(
+        *args, **kwargs,
+        swagger_js_url="/static/js/swagger-ui-bundle.js",
+        swagger_css_url="/static/css/swagger-ui.css",
+        swagger_favicon_url="/static/images/swagger_favicon.png")
+
+
+# Monkey patching get_swagger_ui_html due to a swagger UI bug: https://github.com/fastapi/fastapi/issues/1762
+# Without this patch, The URL change doesn't take effect.
+applications.get_swagger_ui_html = swagger_monkey_patch
+
+
+app = FastAPI(
+    title="AI Smart Lead",
+    description="Uses GCP Vertex AI (Text Bison) to understand the natural language and give required insights.",
+    version="1.0.2"
+)
 
 
 # TODO: Identify the allowed origins and only allow those before going live.
@@ -64,4 +86,4 @@ logger_instance.info("Configured Database Successfully!")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=80)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
