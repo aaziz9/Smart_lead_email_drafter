@@ -6,3 +6,4 @@ starlette==0.37.2
 itsdangerous==2.2.0
 python-dotenv==1.0.1
 SQLAlchemy==2.0.35
+pydantic==2.9.2
