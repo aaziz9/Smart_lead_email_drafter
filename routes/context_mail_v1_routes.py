@@ -9,7 +9,8 @@ from models.email_model import Email
 from models.email_thread_model import EmailThread
 from models.user_model import User
 from models.email_recipient_model import EmailRecipient
-from request_schema.email_request_schema import EmailCreateRequest, UserCreateRequest
+from request_schema.email_resource_schema import EmailSchema
+from request_schema.email_user_resource_schema import EmailUserSchema
 from utils.user_utils import get_current_user
 
 context_mail_router = APIRouter()
@@ -72,10 +73,10 @@ async def get_emails_in_thread(thread_id: int, db: Session = Depends(get_db),
 
 # 1. [POST] Create a new user (manually parse request data)
 @context_mail_router.post("/context_mail/v1/users", tags=["Context Mail Users"])
-async def create_user(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+async def create_user(user: EmailUserSchema, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     # Parse incoming JSON data manually
-    user_data = await request.json()
-    user = UserCreateRequest(**user_data)  # Manually instantiate UserCreateRequest
+    # user_data = await request.json()
+    # user = EmailUserSchema(**user_data)  # Manually instantiate UserCreateRequest
 
     # Check if the user already exists
     existing_user = db.query(User).filter(User.email == user.email).first()
@@ -93,10 +94,10 @@ async def create_user(request: Request, db: Session = Depends(get_db), user_info
 
 # 2. [POST] Create a new email (manually parse request data)
 @context_mail_router.post("/context_mail/v1/emails", tags=["Context Mail Users"])
-async def create_email(request: Request, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
+async def create_email(email_request: EmailSchema, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
     # Parse incoming JSON data manually
-    email_data = await request.json()
-    email_request = EmailCreateRequest(**email_data)  # Manually instantiate EmailCreateRequest
+    # email_data = await request.json()
+    # email_request = EmailSchema(**email_data)  # Manually instantiate EmailCreateRequest
 
     # Step 1: Fetch sender ID using the sender's email address
     sender = db.query(User).filter(User.email == email_request.sender_email).first()
