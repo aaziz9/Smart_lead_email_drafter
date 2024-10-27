@@ -1,22 +1,21 @@
 import traceback
-
-from fastapi import APIRouter, Depends, HTTPException, Request
-from sqlalchemy.orm import Session
+from fastapi import Request, APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-
+from sqlalchemy.orm import Session
 from db_utils.database_init import get_db
+from utils.user_utils import get_current_user
+from models.user_model import User
 from models.email_model import Email
 from models.email_thread_model import EmailThread
-from models.user_model import User
 from models.email_recipient_model import EmailRecipient
+from services.gcp_context_mail_service import get_emails_in_curr_thread
 from request_schema.email_resource_schema import EmailSchema
 from request_schema.email_user_resource_schema import EmailUserSchema
-from utils.user_utils import get_current_user
 
 context_mail_router = APIRouter()
 
 
-# Existing routes
+# Original GET routes (unchanged)
 
 @context_mail_router.get("/context_mail/v1/users", tags=["Context Mail Users"])
 async def get_users(db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
@@ -59,25 +58,37 @@ async def get_email_threads(db: Session = Depends(get_db), user_info: dict = Dep
     ]})
 
 
-@context_mail_router.get("/context_mail/v1/email_threads/{thread_id}/emails", tags=["Context Mail Users"])
-async def get_emails_in_thread(thread_id: int, db: Session = Depends(get_db),
-                               user_info: dict = Depends(get_current_user)):
-    emails_in_thread = db.query(Email).filter(Email.thread_id == thread_id).all()
+@context_mail_router.get("/context_mail/v2/email_threads", tags=["Context Mail Users"])
+async def get_email_threads_for_curr_user(request: Request, db: Session = Depends(get_db),
+                                          user_info: dict = Depends(get_current_user)):
+    user_email = request.session.get("user_info", {}).get("email")
+    if not user_email:
+        raise HTTPException(status_code=403, detail="User is not logged in")
+    user = db.query(User).filter(User.email == user_email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    fetched_email_threads = db.query(EmailThread).join(Email).filter(Email.sender_id == user.id).all()
     return JSONResponse(status_code=200, content={"data": [
-        {"id": email.id, "sender_id": email.sender_id, "subject": email.subject, "body": email.body}
-        for email in emails_in_thread
+        {"id": thread.id, "title": thread.title} for thread in fetched_email_threads
     ]})
 
 
-# New routes
+@context_mail_router.get("/context_mail/v1/email_threads/{thread_id}/emails", tags=["Context Mail Users"])
+async def get_emails_in_thread(thread_id: int, db: Session = Depends(get_db),
+                               user_info: dict = Depends(get_current_user)):
+    try:
+        emails_in_curr_thread = get_emails_in_curr_thread(thread_id=thread_id, db_pointer=db)
+        return emails_in_curr_thread
+    except Exception:
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail="Unable to get emails from thread")
 
-# 1. [POST] Create a new user (manually parse request data)
+
+# New POST Routes for Creating User and Email
+
 @context_mail_router.post("/context_mail/v1/users", tags=["Context Mail Users"])
-async def create_user(user: EmailUserSchema, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-    # Parse incoming JSON data manually
-    # user_data = await request.json()
-    # user = EmailUserSchema(**user_data)  # Manually instantiate UserCreateRequest
-
+async def create_user(user: EmailUserSchema, db: Session = Depends(get_db),
+                      user_info: dict = Depends(get_current_user)):
     # Check if the user already exists
     existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user:
@@ -88,17 +99,12 @@ async def create_user(user: EmailUserSchema, db: Session = Depends(get_db), user
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-
     return {"id": new_user.id, "name": new_user.name, "email": new_user.email}
 
 
-# 2. [POST] Create a new email (manually parse request data)
 @context_mail_router.post("/context_mail/v1/emails", tags=["Context Mail Users"])
-async def create_email(email_request: EmailSchema, db: Session = Depends(get_db), user_info: dict = Depends(get_current_user)):
-    # Parse incoming JSON data manually
-    # email_data = await request.json()
-    # email_request = EmailSchema(**email_data)  # Manually instantiate EmailCreateRequest
-
+async def create_email(email_request: EmailSchema, db: Session = Depends(get_db),
+                       user_info: dict = Depends(get_current_user)):
     # Step 1: Fetch sender ID using the sender's email address
     sender = db.query(User).filter(User.email == email_request.sender_email).first()
     if not sender:
@@ -136,7 +142,6 @@ async def create_email(email_request: EmailSchema, db: Session = Depends(get_db)
         db.add(recipient_entry)
 
     db.commit()
-
     return {
         "email_id": new_email.id,
         "thread_id": new_thread.id,
@@ -145,31 +150,3 @@ async def create_email(email_request: EmailSchema, db: Session = Depends(get_db)
         "sender_id": new_email.sender_id,
         "receivers": email_request.receiver_emails
     }
-
-
-
-@context_mail_router.get("/context_mail/v2/email_threads", tags=["Context Mail Users"])
-async def get_email_threads_for_curr_user(request: Request, db: Session = Depends(get_db),
-                                          user_info: dict = Depends(get_current_user)):
-    # Get the logged-in user's email from the session
-    user_email = request.session.get("user_info", {}).get("email")
-
-    # If the email is not found in the session, return a 403 (Forbidden) error
-    if not user_email:
-        raise HTTPException(status_code=403, detail="User is not logged in")
-
-    # Query the user by email
-    user = db.query(User).filter(User.email == user_email).first()
-
-    # If user is not found, raise a 404 error
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # Query the threads where the user is the sender of at least one email
-    fetched_email_threads = db.query(EmailThread).join(Email).filter(Email.sender_id == user.id).all()
-
-    return JSONResponse(
-        status_code=200, content={"data": [
-            {"id": thread.id, "title": thread.title} for thread in fetched_email_threads
-        ]}
-    )
