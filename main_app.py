@@ -12,6 +12,7 @@ from routes.gcp_text_bison_routes import gcp_text_bison_router
 from routes.gcp_user_routes import gcp_user_router
 from routes.context_mail_v1_routes import context_mail_router
 from routes.config_routes import config_routes  # Import config routes
+from routes.azure_auth_routes import azure_router
 
 from db_utils.database_init import Base, engine
 
@@ -36,6 +37,9 @@ app.include_router(static_files_router)
 
 # Include the GCP-related routes
 app.include_router(gcp_router)
+
+# Include the GCP-related routes
+app.include_router(azure_router)
 
 # Include the GCP text bison-related routes
 app.include_router(gcp_text_bison_router)
