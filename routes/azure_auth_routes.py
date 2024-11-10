@@ -44,7 +44,7 @@ async def homepage():
 
 @azure_router.get("/azure_login")
 async def login(request: Request):
-    redirect_uri = "http://localhost:8080/azure_auth"
+    redirect_uri = "http://localhost/azure_auth"
     return await oauth.microsoft.authorize_redirect(request, redirect_uri)
 
 @azure_router.get("/azure_auth")
@@ -55,7 +55,7 @@ async def auth(request: Request):
         return HTMLResponse(f"OAuth Error: {error.error}", status_code=400)
     request.session['token'] = token
     print(f">>>>>>>>>>>>>> Token Object: {token}")
-    return RedirectResponse(url='/emails')
+    return RedirectResponse(url='/azure_emails')
 
 
 @azure_router.get("/azure_emails")
@@ -118,7 +118,7 @@ async def emails(request: Request):
                 for recipient in email.get('toRecipients', [])
             ]
         }
-        threads_dict[conv_id]["emails"].azure_routerend(email_data)
+        threads_dict[conv_id]["emails"].append(email_data)
 
     # Convert the threads_dict to a list
     threads = list(threads_dict.values())
