@@ -9,7 +9,6 @@ from utils.user_utils import get_current_user
 gcp_user_email_router = APIRouter()
 
 
-# Route for index.html
 @gcp_user_email_router.get(path="/gcp_user/v1/userinfo",
                            description="Get user name and email of currently logged in user.",
                            tags=["Google's User"])
