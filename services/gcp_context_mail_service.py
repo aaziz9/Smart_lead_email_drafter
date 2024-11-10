@@ -1,7 +1,3 @@
-from fastapi import Depends
-from sqlalchemy.orm import Session
-
-from db_utils.database_init import get_db
 from models.email_thread_model import EmailThread
 
 

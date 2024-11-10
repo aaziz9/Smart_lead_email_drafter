@@ -7,11 +7,15 @@ from utils.logging_utils import logger_instance
 from starlette.middleware.sessions import SessionMiddleware
 
 from routes.static_files_routes import static_files_router
-from routes.gcp_auth_routes import gcp_router, config
+from routes.config_routes import config_routes
+from routes.local_context_mail_v1_routes import context_mail_router
+
+from routes.gcp_auth_routes import gcp_auth_router, config
 from routes.gcp_text_bison_routes import gcp_text_bison_router
-from routes.gcp_user_routes import gcp_user_router
-from routes.context_mail_v1_routes import context_mail_router
-from routes.config_routes import config_routes  # Import config routes
+from routes.gcp_user_gmail_routes import gcp_user_email_router
+
+from routes.azure_auth_routes import azure_auth_router
+from routes.azure_user_outlook_mail_routes import azure_user_outlook_mail_router
 
 from db_utils.database_init import Base, engine
 
@@ -34,14 +38,14 @@ app.add_middleware(
 # Include the static file routes
 app.include_router(static_files_router)
 
-# Include the GCP-related routes
-app.include_router(gcp_router)
+# Include the GCP related routes
+app.include_router(gcp_auth_router)
+app.include_router(gcp_text_bison_router)  # GCP text bison-related routes
+app.include_router(gcp_user_email_router)  # GCP user Gmail related routes
 
-# Include the GCP text bison-related routes
-app.include_router(gcp_text_bison_router)
-
-# Include the GCP user related routes
-app.include_router(gcp_user_router)
+# Include the Azure related routes
+app.include_router(azure_auth_router)
+app.include_router(azure_user_outlook_mail_router)  # Microsoft Azure User Outlook email related routes
 
 # Add URL mappings related to all context mail page-related routes
 app.include_router(context_mail_router)

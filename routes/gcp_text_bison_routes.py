@@ -47,6 +47,7 @@ async def get_emails_as_str_in_thread_context(request: Request, email_thread_id:
                                               user_info: dict = Depends(get_current_user)):
     """
     Your custom API endpoint to fetch results based on a context which is a collection of emails.
+    :param email_thread_id: The ID of the email conversation thread.
     :param db: Pointer referring to the Database.
     :param user_info: Contains user information fetched from the GCP ID token.
     :param request: Request object received from the client.
