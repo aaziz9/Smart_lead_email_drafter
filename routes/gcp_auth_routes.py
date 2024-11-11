@@ -8,11 +8,6 @@ from fastapi.responses import JSONResponse, RedirectResponse
 
 from authlib.integrations.starlette_client import OAuth
 from starlette.config import Config
-from dotenv import load_dotenv
-
-# Load all the entries from .env file as environment variables
-# The .env file should have the values for GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET
-load_dotenv()
 
 
 # Global Declarations
@@ -63,7 +58,7 @@ async def login(request: Request):
     :return: Redirect to GCP auth page and then GCP tell the browser to redirect to a specific URL
     """
     # Clear the session data
-    request.session.clear()
+    # request.session.clear()
 
     # Nonce is used to mitigate any replay attacks where an attacker captures the request and send it later.
     request.session['nonce'] = secrets.token_urlsafe(16)  # Store generated nonce in session for later validation
@@ -89,10 +84,9 @@ async def auth(request: Request):
         return JSONResponse({"error": "Invalid nonce"}, status_code=400)
 
     # Store the access token in sessions dict for later use
-    request.session['token'] = token
+    request.session['gcp_token'] = token
     request.session['user_info'] = {"name": user.name, "email": user.email}
 
-    # return JSONResponse({"user": user, "token": token})
     return RedirectResponse(url="/")
 
 
@@ -103,7 +97,7 @@ async def refresh_token(request: Request):
     :param request: Request object containing data related to the incoming request.
     :return: New access and id token.
     """
-    token = request.session.get('token')
+    token = request.session.get('gcp_token')
     if not token:
         return JSONResponse({"error": "Token not found in session"}, status_code=400)
 
@@ -124,10 +118,10 @@ async def refresh_token(request: Request):
         return JSONResponse({"error": new_token['error']}, status_code=400)
 
     # Retain the refresh token, so we can keep getting access tokens once they expire.
-    new_token['refresh_token'] = token['refresh_token']
+    new_token['gcp_refresh_token'] = token['refresh_token']
 
     # Update the existing token info with the new one
-    request.session['token'] = new_token
+    request.session['gcp_token'] = new_token
     return JSONResponse({"new_token": new_token})
 
 
@@ -146,7 +140,7 @@ async def logout(request: Request):
 # Check if the user is logged in
 @gcp_auth_router.get("/login_status", tags=["User Authorization"])
 async def login_status(request: Request):
-    token = request.session.get('token')
+    token = request.session.get('gcp_token')
     if not token:
         return JSONResponse({"logged_in": False})
     return JSONResponse({"logged_in": True, "user_info": request.session.get('user_info', {})})

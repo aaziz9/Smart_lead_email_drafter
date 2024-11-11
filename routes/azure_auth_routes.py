@@ -2,14 +2,11 @@ import os
 import requests
 from fastapi import APIRouter
 
-from fastapi import FastAPI, Request
+from fastapi import Request
 from fastapi.responses import RedirectResponse, JSONResponse, HTMLResponse
 from authlib.integrations.starlette_client import OAuth, OAuthError
 from starlette.config import Config
-from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
 
 azure_auth_router = APIRouter()
 
@@ -49,7 +46,7 @@ async def auth(request: Request):
         token = await oauth.microsoft.authorize_access_token(request)
     except OAuthError as error:
         return HTMLResponse(f"OAuth Error: {error.error}", status_code=400)
-    request.session['token'] = token
+    request.session['azure_token'] = token
     return RedirectResponse(url='/')
 
 

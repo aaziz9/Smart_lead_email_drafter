@@ -21,6 +21,13 @@ from db_utils.database_init import Base, engine
 
 from models import user_model, email_thread_model, email_model, email_recipient_model
 
+from dotenv import load_dotenv
+
+
+# Load all the entries from .env file as environment variables
+# The .env file should have the values for GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET
+load_dotenv()
+
 
 app = FastAPI()
 
@@ -33,6 +40,9 @@ app.add_middleware(
     allow_methods=["*"],  # Allow all HTTP methods
     allow_headers=["*"],  # Allow all headers
 )
+
+# Add session middleware to manage user sessions
+app.add_middleware(SessionMiddleware, secret_key=config('SECRET_KEY'))
 
 
 # Include the static file routes
@@ -54,9 +64,6 @@ app.include_router(context_mail_router)
 app.include_router(config_routes)
 
 logger_instance.info("Included all URL Mappings")
-
-# Add session middleware to manage user sessions
-app.add_middleware(SessionMiddleware, secret_key=config('SECRET_KEY'))
 
 # Mount the static directory to serve static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
