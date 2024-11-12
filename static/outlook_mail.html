@@ -61,6 +61,16 @@
             <div class="mb-2">
                 <button onclick="showAzureAccessToken()">Show Access Token</button>
             </div>
+
+            <div class="mb-2">
+                <textarea id="emailResponse" 
+                          class="form-control" 
+                          style="height: 500px; width: 800px; overflow: auto; white-space: pre;">
+                </textarea>
+            </div>
+            <div class="mb-2">
+                <button onclick="showEmailResponse()">Show Emails</button>
+            </div>
         </div>
 
         <script>
@@ -77,6 +87,19 @@
                         accessTokenDisplayArea.value = jsonResponse.azure_access_token;
                     } else {
                         accessTokenDisplayArea.value = jsonResponse.msg;
+                    }
+                });
+            };
+
+            const showEmailResponse = () => {
+                fetch("http://localhost/azure_user/v1/emails")
+                .then(response => response.json())
+                .then(jsonResponse => {
+                    const emailResponseArea = document.getElementById("emailResponse");
+                    if ('data' in jsonResponse) {
+                        emailResponseArea.value = JSON.stringify(jsonResponse.data, null, 2);
+                    } else {
+                        emailResponseArea.value = "Unable to fetch emails.";
                     }
                 });
             };
