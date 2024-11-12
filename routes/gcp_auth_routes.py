@@ -9,6 +9,13 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from authlib.integrations.starlette_client import OAuth
 from starlette.config import Config
 
+from dotenv import load_dotenv
+
+
+# Load all the entries from .env file as environment variables
+# The .env file should have the values for GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET
+load_dotenv()
+
 
 # Global Declarations
 gcp_auth_router = APIRouter()

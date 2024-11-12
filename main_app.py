@@ -21,13 +21,6 @@ from db_utils.database_init import Base, engine
 
 from models import user_model, email_thread_model, email_model, email_recipient_model
 
-from dotenv import load_dotenv
-
-
-# Load all the entries from .env file as environment variables
-# The .env file should have the values for GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET
-load_dotenv()
-
 
 app = FastAPI()
 

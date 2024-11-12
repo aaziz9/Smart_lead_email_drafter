@@ -15,6 +15,7 @@ azure_user_outlook_mail_router = APIRouter()
                                     description="Get Outlook emails of the logged in user (Personal Outlook Account).",
                                     tags=["Microsoft Outlook User"])
 async def emails(request: Request):
+    request.headers["access_token"]
     token = request.session.get('azure_token')
     if not token:
         return RedirectResponse(url='/')
