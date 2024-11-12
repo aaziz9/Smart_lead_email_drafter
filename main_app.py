@@ -34,6 +34,9 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
+# Add session middleware to manage user sessions
+app.add_middleware(SessionMiddleware, secret_key=config('SECRET_KEY'))
+
 
 # Include the static file routes
 app.include_router(static_files_router)
@@ -54,9 +57,6 @@ app.include_router(context_mail_router)
 app.include_router(config_routes)
 
 logger_instance.info("Included all URL Mappings")
-
-# Add session middleware to manage user sessions
-app.add_middleware(SessionMiddleware, secret_key=config('SECRET_KEY'))
 
 # Mount the static directory to serve static files
 app.mount("/static", StaticFiles(directory="static"), name="static")

@@ -17,5 +17,10 @@ async def context_mail():
 
 
 @static_files_router.get("/config", include_in_schema=False)
-async def serve_config_page():
+async def config_page():
     return FileResponse('static/config.html')
+
+
+@static_files_router.get("/outlook_mail", include_in_schema=False)
+async def outlook_mail_page():
+    return FileResponse('static/outlook_mail.html')

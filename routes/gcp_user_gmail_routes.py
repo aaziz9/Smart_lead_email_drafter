@@ -20,7 +20,7 @@ async def get_gcp_user_info(user_info: dict = Depends(get_current_user)):
 
 @gcp_user_email_router.get("/gcp_user/v1/emails", tags=["Google's User"])
 async def read_gmail_emails(request: Request, user_info: dict = Depends(get_current_user)):
-    access_token = request.session.get('token')["access_token"]
+    access_token = request.session.get('gcp_token')["access_token"]
 
     # Set up headers with the access token
     headers = {

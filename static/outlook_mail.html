@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Microsoft Emails</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/static/css/config.css">
+    </head>
+    <body>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container-fluid d-flex justify-content-between align-items-center">
+                <!-- Left Side: Brand and Navigation Links -->
+                <div class="d-flex align-items-center">
+                    <a class="navbar-brand d-flex align-items-center" href="#">
+                        <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+                        <span class="ms-2">AI SMART LEAD</span>
+                    </a>
+                    <!-- Navigation Links -->
+                    <div class="navbar-nav ms-3">
+                        <div class="nav-item">
+                            <a class="nav-link" href="/">Email Drafter</a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="/context_mail">Context Mail</a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="/outlook_mail">Outlook Mail</a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="/config">Edit Configuration</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Side: Login/Logout Buttons -->
+                <div class="navbar-nav" id="nav-buttons">
+                    <div class="nav-item d-flex align-items-center">
+                        <a class="nav-link p-0 m-0" href="/login">
+                            <button class="btn btn-custom" id="login-button">Login</button>
+                        </a>
+                        <button id="logout-button" class="btn btn-custom" style="display: none;">Logout</button>
+                        <span id="welcome-message" style="display: none; margin-left: 15px; color: #ff6900;">Welcome, User!</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Container for Editing Configuration -->
+        <div class="container">
+            <h2>Microsoft Emails</h2>
+
+            <div class="mb-2">
+                <label>Application needs permissions to access your Outlook Mails.</label>
+                <button onclick="signInToMicrosoft()">Sign In with Microsoft</button>
+            </div>
+
+            <div class="mb-2">
+                <textarea id="azureBearerTokenValue" rows="15" cols="100"></textarea>
+            </div>
+            <div class="mb-2">
+                <button onclick="showAzureAccessToken()">Show Access Token</button>
+            </div>
+
+            <div class="mb-2">
+                <textarea id="emailResponse" 
+                          class="form-control" 
+                          style="height: 500px; width: 800px; overflow: auto; white-space: pre;">
+                </textarea>
+            </div>
+            <div class="mb-2">
+                <button onclick="showEmailResponse()">Show Emails</button>
+            </div>
+        </div>
+
+        <script>
+            const signInToMicrosoft = () => {
+                window.location.href = "/azure_login";
+            };
+
+            const showAzureAccessToken = () => {
+                fetch("http://localhost/get_azure_auth_token")
+                .then(response => response.json())
+                .then(jsonResponse => {
+                    const accessTokenDisplayArea = document.getElementById("azureBearerTokenValue");
+                    if ('azure_access_token' in jsonResponse) {
+                        accessTokenDisplayArea.value = jsonResponse.azure_access_token;
+                    } else {
+                        accessTokenDisplayArea.value = jsonResponse.msg;
+                    }
+                });
+            };
+
+            const showEmailResponse = () => {
+                fetch("http://localhost/azure_user/v1/emails")
+                .then(response => response.json())
+                .then(jsonResponse => {
+                    const emailResponseArea = document.getElementById("emailResponse");
+                    if ('data' in jsonResponse) {
+                        emailResponseArea.value = JSON.stringify(jsonResponse.data, null, 2);
+                    } else {
+                        emailResponseArea.value = "Unable to fetch emails.";
+                    }
+                });
+            };
+        </script>
+
+        <script>
+            // Initialize tooltips
+            document.addEventListener('DOMContentLoaded', function () {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl)
+                })
+            });
+
+            // Check login status and update the UI accordingly
+            async function checkLoginStatus() {
+                try {
+                    const response = await fetch('/login_status', { method: 'GET' });
+                    const data = await response.json();
+                    if (data.logged_in) {
+                        document.getElementById('login-button').style.display = 'none';
+                        document.getElementById('logout-button').style.display = 'inline-block';
+                        document.getElementById('welcome-message').style.display = 'inline-block';
+                        document.getElementById('welcome-message').innerText = `Welcome, ${data.user_info.name || 'User'}!`;
+
+                        // Show the Save button
+                        document.getElementById('save-button').style.display = 'block';
+
+                    } else {
+                        document.getElementById('login-button').style.display = 'inline-block';
+                        document.getElementById('logout-button').style.display = 'none';
+                        document.getElementById('welcome-message').style.display = 'none';
+
+                        // Hide the Save button
+                        document.getElementById('save-button').style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error("Error checking login status:", error);
+                }
+            }
+
+            // Check login status on page load
+            checkLoginStatus();
+
+            // Logout functionality script
+            document.getElementById('logout-button').addEventListener('click', async function() {
+                try {
+                    const response = await fetch('/logout', { method: 'GET' });
+                    const data = await response.json();
+                    if (response.ok) {
+                        alert(data.message); // Show a message on successful logout
+                        window.location.href = "/"; // Redirect to the homepage or login page
+                    } else {
+                        throw new Error(data.detail || "Logout failed");
+                    }
+                } catch (error) {
+                    console.error("Logout failed:", error.message);
+                    alert("An error occurred: " + error.message);
+                }
+            });
+        </script>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

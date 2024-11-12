@@ -2,7 +2,7 @@ import requests
 
 from fastapi import APIRouter
 from fastapi import Request
-from fastapi.responses import RedirectResponse, JSONResponse, HTMLResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 
 from bs4 import BeautifulSoup
 
@@ -15,10 +15,12 @@ azure_user_outlook_mail_router = APIRouter()
                                     description="Get Outlook emails of the logged in user (Personal Outlook Account).",
                                     tags=["Microsoft Outlook User"])
 async def emails(request: Request):
-    token = request.session.get('token')
-    if not token:
-        return RedirectResponse(url='/')
-    access_token = token['access_token']
+    access_token = request.cookies.get("azure_access_token", None)
+
+    if not access_token:
+        return JSONResponse(content={"msg": f"Token not found. Use /azure_login link to login first and then retry."},
+                            status_code=401)
+
     headers = {
         'Authorization': f'Bearer {access_token}',
         'Prefer': 'outlook.body-content-type="html"'  # Request HTML content
@@ -36,4 +38,4 @@ async def emails(request: Request):
 
     # Convert the threads_dict to a list
     threads = encapsulate_thread_email_details_in_response(given_json_response=msg_response.json().get('value', []))
-    return JSONResponse(content=threads)
+    return JSONResponse(content={"data": threads})

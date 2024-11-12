@@ -21,7 +21,7 @@ async def get_processed_text(request: Request, user_info: dict = Depends(get_cur
     :param user_info: Contains user information fetched from the GCP ID token.
     :param request: Request object received from the client.
     """
-    token = request.session.get('token')
+    token = request.session.get('gcp_token')
     if not token:
         return JSONResponse({"error": "Token not found in session"}, status_code=400)
     else:
@@ -52,7 +52,7 @@ async def get_emails_as_str_in_thread_context(request: Request, email_thread_id:
     :param user_info: Contains user information fetched from the GCP ID token.
     :param request: Request object received from the client.
     """
-    token = request.session.get('token')
+    token = request.session.get('gcp_token')
 
     try:
         emails_in_curr_thread = get_emails_in_curr_thread(thread_id=email_thread_id, db_pointer=db)
