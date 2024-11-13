@@ -46,30 +46,26 @@
             </div>
         </nav>
 
-        <!-- Main Container for Editing Configuration -->
-        <div class="container">
+        <!-- Main Container for Microsoft Emails -->
+        <div class="container mt-4">
             <h2>Microsoft Emails</h2>
 
             <div class="mb-2">
                 <label>Application needs permissions to access your Outlook Mails.</label>
-                <button onclick="signInToMicrosoft()">Sign In with Microsoft</button>
+                <button onclick="signInToMicrosoft()" class="btn btn-primary">Sign In with Microsoft</button>
             </div>
 
-            <div class="mb-2">
-                <textarea id="azureBearerTokenValue" rows="15" cols="100"></textarea>
-            </div>
-            <div class="mb-2">
-                <button onclick="showAzureAccessToken()">Show Access Token</button>
+            <!-- Dropdown to select email -->
+            <div class="mb-4">
+                <label for="emailSelect" class="form-label">Select Email</label>
+                <select id="emailSelect" class="form-select" onchange="showEmailContent()">
+                    <option value="">Choose an email...</option>
+                </select>
             </div>
 
-            <div class="mb-2">
-                <textarea id="emailResponse" 
-                          class="form-control" 
-                          style="height: 500px; width: 800px; overflow: auto; white-space: pre;">
-                </textarea>
-            </div>
-            <div class="mb-2">
-                <button onclick="showEmailResponse()">Show Emails</button>
+            <!-- Detailed email view -->
+            <div id="emailContentView" style="display: none; margin-top: 20px;">
+                <!-- Full content of an email will be displayed here -->
             </div>
         </div>
 
@@ -78,43 +74,75 @@
                 window.location.href = "/azure_login";
             };
 
-            const showAzureAccessToken = () => {
-                fetch("http://localhost/get_azure_auth_token")
-                .then(response => response.json())
-                .then(jsonResponse => {
-                    const accessTokenDisplayArea = document.getElementById("azureBearerTokenValue");
-                    if ('azure_access_token' in jsonResponse) {
-                        accessTokenDisplayArea.value = jsonResponse.azure_access_token;
-                    } else {
-                        accessTokenDisplayArea.value = jsonResponse.msg;
-                    }
-                });
-            };
-
             const showEmailResponse = () => {
                 fetch("http://localhost/azure_user/v1/emails")
                 .then(response => response.json())
                 .then(jsonResponse => {
-                    const emailResponseArea = document.getElementById("emailResponse");
+                    const emailSelect = document.getElementById("emailSelect");
+                    emailSelect.innerHTML = '<option value="">Choose an email...</option>'; // Clear previous options
+
                     if ('data' in jsonResponse) {
-                        emailResponseArea.value = JSON.stringify(jsonResponse.data, null, 2);
+                        jsonResponse.data.forEach((emailThread) => {
+                            emailThread.emails.forEach((email, index) => {
+                                const option = document.createElement('option');
+                                option.value = JSON.stringify(email);
+                                option.text = email.subject || 'No Subject';
+                                emailSelect.appendChild(option);
+                            });
+                        });
                     } else {
-                        emailResponseArea.value = "Unable to fetch emails.";
+                        emailSelect.innerHTML = '<option value="">Unable to fetch emails.</option>';
                     }
+                })
+                .catch(error => {
+                    console.error("Error fetching emails:", error);
+                    emailSelect.innerHTML = '<option value="">An error occurred while fetching emails. Please try again later.</option>';
                 });
             };
-        </script>
 
-        <script>
-            // Initialize tooltips
+            const showEmailContent = () => {
+                const emailContentView = document.getElementById('emailContentView');
+                const selectedEmail = document.getElementById('emailSelect').value;
+
+                if (!selectedEmail) {
+                    emailContentView.style.display = 'none';
+                    return;
+                }
+
+                const email = JSON.parse(selectedEmail);
+
+                emailContentView.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">${email.subject || 'No Subject'}</h5>
+                            <p class="card-subtitle mb-2 text-muted">From: ${email.sender_id || 'Unknown'}</p>
+                            <p class="card-subtitle mb-2 text-muted">Recipients: ${email.recipients.join(', ') || 'No Recipients'}</p>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">${email.body || 'No content available.'}</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <small>Received: ${email.timestamp || 'No Date'}</small>
+                        </div>
+                    </div>
+                `;
+                emailContentView.style.display = 'block';
+            };
+
+            // Initialize tooltips and fetch emails when the page loads
             document.addEventListener('DOMContentLoaded', function () {
                 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
                 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                     return new bootstrap.Tooltip(tooltipTriggerEl)
-                })
+                });
+
+                // Fetch the emails
+                showEmailResponse();
+
+                // Check login status on page load
+                checkLoginStatus();
             });
 
-            // Check login status and update the UI accordingly
             async function checkLoginStatus() {
                 try {
                     const response = await fetch('/login_status', { method: 'GET' });
@@ -124,25 +152,15 @@
                         document.getElementById('logout-button').style.display = 'inline-block';
                         document.getElementById('welcome-message').style.display = 'inline-block';
                         document.getElementById('welcome-message').innerText = `Welcome, ${data.user_info.name || 'User'}!`;
-
-                        // Show the Save button
-                        document.getElementById('save-button').style.display = 'block';
-
                     } else {
                         document.getElementById('login-button').style.display = 'inline-block';
                         document.getElementById('logout-button').style.display = 'none';
                         document.getElementById('welcome-message').style.display = 'none';
-
-                        // Hide the Save button
-                        document.getElementById('save-button').style.display = 'none';
                     }
                 } catch (error) {
                     console.error("Error checking login status:", error);
                 }
             }
-
-            // Check login status on page load
-            checkLoginStatus();
 
             // Logout functionality script
             document.getElementById('logout-button').addEventListener('click', async function() {
@@ -150,8 +168,8 @@
                     const response = await fetch('/logout', { method: 'GET' });
                     const data = await response.json();
                     if (response.ok) {
-                        alert(data.message); // Show a message on successful logout
-                        window.location.href = "/"; // Redirect to the homepage or login page
+                        alert(data.message);
+                        window.location.href = "/";
                     } else {
                         throw new Error(data.detail || "Logout failed");
                     }
