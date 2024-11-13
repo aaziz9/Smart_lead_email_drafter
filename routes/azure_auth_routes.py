@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 
 # Load all the entries from .env file as environment variables
-# The .env file should have the values for GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET
+# The .env file should have the values for MICROSOFT_CLIENT_ID, MICROSOFT_CLIENT_SECRET etc ...
 load_dotenv()
 
 
@@ -21,7 +21,8 @@ azure_auth_router = APIRouter()
 config_data = {
     'MICROSOFT_CLIENT_ID': os.environ.get("MICROSOFT_CLIENT_ID"),
     'MICROSOFT_CLIENT_SECRET': os.environ.get("MICROSOFT_CLIENT_SECRET"),
-    'MICROSOFT_TENANT_ID': os.environ.get("MICROSOFT_TENANT_ID", "common")
+    'MICROSOFT_TENANT_ID': os.environ.get("MICROSOFT_TENANT_ID", "common"),
+    'REDIRECT_URI': os.getenv('MICROSOFT_AUTH_REDIRECT_URI', 'http://localhost/azure_auth'),
 }
 
 config = Config(environ=config_data)
@@ -42,8 +43,7 @@ oauth.register(
 
 @azure_auth_router.get("/azure_login", include_in_schema=False)
 async def login(request: Request):
-    redirect_uri = "http://localhost/azure_auth"
-    return await oauth.microsoft.authorize_redirect(request, redirect_uri)
+    return await oauth.microsoft.authorize_redirect(request, config('REDIRECT_URI'))
 
 
 @azure_auth_router.get("/azure_auth", include_in_schema=False)

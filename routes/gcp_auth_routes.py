@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 
 # Load all the entries from .env file as environment variables
-# The .env file should have the values for GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET
+# The .env file should have the values for GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET etc ...
 load_dotenv()
 
 
@@ -25,8 +25,7 @@ gcp_auth_router = APIRouter()
 config_data = {
     'GOOGLE_CLIENT_ID': os.getenv('GOOGLE_CLIENT_ID'),
     'GOOGLE_CLIENT_SECRET': os.getenv('GOOGLE_CLIENT_SECRET'),
-    'REDIRECT_URI': 'http://localhost/auth',
-    'SECRET_KEY':  secrets.token_hex(32)  # This is for session management
+    'REDIRECT_URI': os.getenv('GOOGLE_AUTH_REDIRECT_URI', 'http://localhost/auth')
 }
 config = Config(environ=config_data)
 

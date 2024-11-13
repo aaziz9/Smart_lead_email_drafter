@@ -1,10 +1,8 @@
-version: "3.8"
-
 services:
   email-drafter-api:
     build:
       context: .
-    image: sl-email-drafter:0.0.1
+    image: syedatyab/sl-email-drafter:1.0.5
     ports:
-      - "80:80"
+      - "80:8080"
     restart: on-failure
