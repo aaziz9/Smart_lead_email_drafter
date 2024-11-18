@@ -1,5 +1,19 @@
 from bs4 import BeautifulSoup
 
+
+def transform_response_with_thread_info(given_json_response):
+    """
+    Extracts email threads from the given JSON response and structures them properly.
+    :param given_json_response: dict with thread ids and email content.
+    :return: A response dict that encapsulates email thread with the related email content.
+    """
+    unique_threads = dict()
+    for threadObjDict in given_json_response:
+        unique_threads[threadObjDict["conversationId"]] = threadObjDict["subject"]
+
+    return [{"id": thread_id, "title": subject} for thread_id, subject in unique_threads.items()]
+
+
 def encapsulate_thread_email_details_in_response(given_json_response):
     """
     Extracts email threads from the given JSON response and structures them properly.
