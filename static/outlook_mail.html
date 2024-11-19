@@ -165,7 +165,7 @@
                 });
         };
 
-        // Generate context based on the email thread
+        // Generate context based on the email thread (Azure Context)
         document.getElementById('generateContextButton').addEventListener('click', function () {
             const selectedThreadId = document.getElementById('emailThreadSelect').value;
 
@@ -174,14 +174,28 @@
                 return;
             }
 
-            fetch(`/text_bison/v1/context_generator/${selectedThreadId}`)
+            // Show a spinner during the request
+            const generateButton = document.getElementById('generateContextButton');
+            generateButton.disabled = true;
+            generateButton.innerText = 'Generating...';
+
+            fetch(`/text_bison/v1/azure_context_generator/${selectedThreadId}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('generatedContextTextArea').value = data.response_msg || 'No context generated';
+                    if (data && data.response_msg) {
+                        document.getElementById('generatedContextTextArea').value = data.response_msg;
+                    } else {
+                        document.getElementById('generatedContextTextArea').value = 'No context generated';
+                    }
                 })
                 .catch(error => {
                     console.error('Error generating context:', error);
                     document.getElementById('generatedContextTextArea').value = 'An error occurred while generating context. Please try again.';
+                })
+                .finally(() => {
+                    // Hide the spinner after the request
+                    generateButton.disabled = false;
+                    generateButton.innerText = 'Generate Context';
                 });
         });
 
