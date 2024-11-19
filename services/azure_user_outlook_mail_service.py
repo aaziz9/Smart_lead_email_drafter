@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
 
+from utils.logging_utils import logger_instance
+
 
 def transform_response_with_thread_info(given_json_response):
     """
@@ -20,23 +22,9 @@ def encapsulate_thread_email_details_in_response(given_json_response):
     :param given_json_response: dict with thread ids and email content.
     :return: A response dict that encapsulates email thread with the related email content.
     """
-    messages = given_json_response
+    list_of_emails_in_the_thread = list()
 
-    # Group messages by conversationId
-    threads_dict = {}
-    for email in messages:
-        conv_id = email.get('conversationId')
-        if not conv_id:
-            print("Skipping email due to missing conversationId")
-            continue
-
-        if conv_id not in threads_dict:
-            threads_dict[conv_id] = {
-                "thread_id": conv_id,
-                "subject": email.get('subject', 'No Subject Available'),  # Default if no subject is available
-                "emails": []
-            }
-
+    for email in given_json_response:
         # Extract uniqueBody content
         unique_body_content = email.get('uniqueBody', {}).get('content', '')
 
@@ -66,14 +54,13 @@ def encapsulate_thread_email_details_in_response(given_json_response):
             ]
         }
 
+        list_of_emails_in_the_thread.append(email_data)
+
         # Logging missing fields to help debugging
         if email_data["sender_id"] == 'Unknown Sender':
-            print(f"Email with ID {email_data['email_id']} is missing sender information.")
+            logger_instance.warn(f"Email with ID {email_data['email_id']} is missing sender information.")
 
         if email_data["subject"] == 'No Subject Available':
-            print(f"Email with ID {email_data['email_id']} is missing a subject.")
+            logger_instance.warn(f"Email with ID {email_data['email_id']} is missing a subject.")
 
-        threads_dict[conv_id]["emails"].append(email_data)
-
-    # Return all threads as a list
-    return list(threads_dict.values())
+    return list_of_emails_in_the_thread

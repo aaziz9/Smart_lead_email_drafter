@@ -10,10 +10,10 @@ from services.azure_user_outlook_mail_service import encapsulate_thread_email_de
 azure_user_outlook_mail_router = APIRouter()
 
 
-@azure_user_outlook_mail_router.get(path="/azure_user/v1/emails",
+@azure_user_outlook_mail_router.get(path="/azure_user/v1/email_threads/{email_thread_id}",
                                     description="Get Outlook emails of the logged in user (Personal Outlook Account).",
                                     tags=["Microsoft Outlook User"])
-async def emails(request: Request, thread_id: str):
+async def emails(request: Request, email_thread_id: str):
     access_token = request.cookies.get("azure_access_token", None)
 
     if not access_token:
@@ -28,7 +28,7 @@ async def emails(request: Request, thread_id: str):
     # https://graph.microsoft.com/v1.0/me/messages?$filter=conversationId eq 'YOUR_CONVERSATION_ID'&$select=id,subject,uniqueBody,receivedDateTime,from,toRecipients
     # thread_id
     messages_endpoint = (
-        f"https://graph.microsoft.com/v1.0/me/messages?$filter=conversationId eq '{thread_id}'"
+        f"https://graph.microsoft.com/v1.0/me/messages?$filter=conversationId eq '{email_thread_id}'"
         "&$select=id,subject,uniqueBody,receivedDateTime,from,toRecipients"
     )
     msg_response = requests.get(messages_endpoint, headers=headers)
@@ -36,8 +36,8 @@ async def emails(request: Request, thread_id: str):
         return HTMLResponse(f"Error fetching messages: {msg_response.text}", status_code=msg_response.status_code)
 
     # Convert the threads_dict to a list
-    threads = encapsulate_thread_email_details_in_response(given_json_response=msg_response.json().get('value', []))
-    return JSONResponse(content={"data": threads})
+    list_of_emails_in_thread = encapsulate_thread_email_details_in_response(given_json_response=msg_response.json().get('value', []))
+    return JSONResponse(content={"thread_id": email_thread_id,  "emails": list_of_emails_in_thread})
 
 
 @azure_user_outlook_mail_router.get(path="/azure_user/v1/email_threads",
