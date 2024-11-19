@@ -1,3 +1,4 @@
+import requests
 from bs4 import BeautifulSoup
 
 from utils.logging_utils import logger_instance
@@ -64,3 +65,24 @@ def encapsulate_thread_email_details_in_response(given_json_response):
             logger_instance.warn(f"Email with ID {email_data['email_id']} is missing a subject.")
 
     return list_of_emails_in_the_thread
+
+
+def get_emails_in_a_thread_and_transform_response(access_token, email_thread_id):
+    transformed_response = []
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Prefer': 'outlook.body-content-type="html"'  # Request HTML content
+    }
+
+    messages_endpoint = (
+        f"https://graph.microsoft.com/v1.0/me/messages?$filter=conversationId eq '{email_thread_id}'"
+        "&$select=id,subject,uniqueBody,receivedDateTime,from,toRecipients"
+    )
+
+    msg_response = requests.get(messages_endpoint, headers=headers)
+    if msg_response.status_code != 200:
+        logger_instance.error(f"Status Code: {msg_response.status_code}, Error fetching messages: {msg_response.text}")
+    else:
+        transformed_response = encapsulate_thread_email_details_in_response(given_json_response=msg_response.json().get('value', []))
+
+    return transformed_response
