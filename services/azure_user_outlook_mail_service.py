@@ -1,4 +1,7 @@
+import requests
 from bs4 import BeautifulSoup
+
+from utils.logging_utils import logger_instance
 
 
 def transform_response_with_thread_info(given_json_response):
@@ -20,23 +23,9 @@ def encapsulate_thread_email_details_in_response(given_json_response):
     :param given_json_response: dict with thread ids and email content.
     :return: A response dict that encapsulates email thread with the related email content.
     """
-    messages = given_json_response
+    list_of_emails_in_the_thread = list()
 
-    # Group messages by conversationId
-    threads_dict = {}
-    for email in messages:
-        conv_id = email.get('conversationId')
-        if not conv_id:
-            print("Skipping email due to missing conversationId")
-            continue
-
-        if conv_id not in threads_dict:
-            threads_dict[conv_id] = {
-                "thread_id": conv_id,
-                "subject": email.get('subject', 'No Subject Available'),  # Default if no subject is available
-                "emails": []
-            }
-
+    for email in given_json_response:
         # Extract uniqueBody content
         unique_body_content = email.get('uniqueBody', {}).get('content', '')
 
@@ -66,14 +55,34 @@ def encapsulate_thread_email_details_in_response(given_json_response):
             ]
         }
 
+        list_of_emails_in_the_thread.append(email_data)
+
         # Logging missing fields to help debugging
         if email_data["sender_id"] == 'Unknown Sender':
-            print(f"Email with ID {email_data['email_id']} is missing sender information.")
+            logger_instance.warn(f"Email with ID {email_data['email_id']} is missing sender information.")
 
         if email_data["subject"] == 'No Subject Available':
-            print(f"Email with ID {email_data['email_id']} is missing a subject.")
+            logger_instance.warn(f"Email with ID {email_data['email_id']} is missing a subject.")
 
-        threads_dict[conv_id]["emails"].append(email_data)
+    return list_of_emails_in_the_thread
 
-    # Return all threads as a list
-    return list(threads_dict.values())
+
+def get_emails_in_a_thread_and_transform_response(access_token, email_thread_id):
+    transformed_response = []
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Prefer': 'outlook.body-content-type="html"'  # Request HTML content
+    }
+
+    messages_endpoint = (
+        f"https://graph.microsoft.com/v1.0/me/messages?$filter=conversationId eq '{email_thread_id}'"
+        "&$select=id,subject,uniqueBody,receivedDateTime,from,toRecipients"
+    )
+
+    msg_response = requests.get(messages_endpoint, headers=headers)
+    if msg_response.status_code != 200:
+        logger_instance.error(f"Status Code: {msg_response.status_code}, Error fetching messages: {msg_response.text}")
+    else:
+        transformed_response = encapsulate_thread_email_details_in_response(given_json_response=msg_response.json().get('value', []))
+
+    return transformed_response
