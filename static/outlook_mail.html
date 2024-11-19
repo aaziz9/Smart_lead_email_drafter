@@ -1,186 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Microsoft Emails</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="/static/css/config.css">
-    </head>
-    <body>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="container-fluid d-flex justify-content-between align-items-center">
-                <!-- Left Side: Brand and Navigation Links -->
-                <div class="d-flex align-items-center">
-                    <a class="navbar-brand d-flex align-items-center" href="#">
-                        <img src="/static/images/Screenshot 2024-09-22 092829.png" alt="Logo" style="height: 40px; margin-right: 10px;">
-                        <span class="ms-2">AI SMART LEAD</span>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Emails</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/config.css">
+    <style>
+        /* Add a fixed height and make it scrollable */
+        #emailThreadView {
+            max-height: 400px; /* Set a fixed height */
+            overflow-y: auto;  /* Add scrollable feature */
+            border: 1px solid #ddd; /* Optional: add a border to separate it visually */
+            padding: 10px; /* Optional: add some padding for better spacing */
+            border-radius: 5px; /* Optional: rounded corners */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <!-- Left Side: Brand and Navigation Links -->
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <img src="C:\Users\71589\Documents\Smart_lead_email_drafter\static\images\omantel_logo.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+                    <span class="ms-2">AI SMART LEAD</span>
+                </a>
+                <!-- Navigation Links -->
+                <div class="navbar-nav ms-3">
+                    <div class="nav-item">
+                        <a class="nav-link" href="/">Email Drafter</a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link" href="/context_mail">Context Mail</a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link" href="/outlook_mail">Outlook Mail</a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link" href="/config">Edit Configuration</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Side: Login/Logout Buttons -->
+            <div class="navbar-nav" id="nav-buttons">
+                <div class="nav-item d-flex align-items-center">
+                    <a class="nav-link p-0 m-0" href="/login">
+                        <button class="btn btn-custom" id="login-button">Login</button>
                     </a>
-                    <!-- Navigation Links -->
-                    <div class="navbar-nav ms-3">
-                        <div class="nav-item">
-                            <a class="nav-link" href="/">Email Drafter</a>
-                        </div>
-                        <div class="nav-item">
-                            <a class="nav-link" href="/context_mail">Context Mail</a>
-                        </div>
-                        <div class="nav-item">
-                            <a class="nav-link" href="/outlook_mail">Outlook Mail</a>
-                        </div>
-                        <div class="nav-item">
-                            <a class="nav-link" href="/config">Edit Configuration</a>
-                        </div>
-                    </div>
+                    <button id="logout-button" class="btn btn-custom" style="display: none;">Logout</button>
+                    <span id="welcome-message" style="display: none; margin-left: 15px; color: #FF6900;">Welcome, User!</span>
                 </div>
-                <!-- Right Side: Login/Logout Buttons -->
-                <div class="navbar-nav" id="nav-buttons">
-                    <div class="nav-item d-flex align-items-center">
-                        <a class="nav-link p-0 m-0" href="/login">
-                            <button class="btn btn-custom" id="login-button">Login</button>
-                        </a>
-                        <button id="logout-button" class="btn btn-custom" style="display: none;">Logout</button>
-                        <span id="welcome-message" style="display: none; margin-left: 15px; color: #ff6900;">Welcome, User!</span>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-        <!-- Main Container for Microsoft Emails -->
-        <div class="container mt-4">
-            <h2>Microsoft Emails</h2>
-
-            <div class="mb-2">
-                <label>Application needs permissions to access your Outlook Mails.</label>
-                <button onclick="signInToMicrosoft()" class="btn btn-primary">Sign In with Microsoft</button>
-            </div>
-
-            <!-- Dropdown to select email -->
-            <div class="mb-4">
-                <label for="emailSelect" class="form-label">Select Email</label>
-                <select id="emailSelect" class="form-select" onchange="showEmailContent()">
-                    <option value="">Choose an email...</option>
-                </select>
-            </div>
-
-            <!-- Detailed email view -->
-            <div id="emailContentView" style="display: none; margin-top: 20px;">
-                <!-- Full content of an email will be displayed here -->
             </div>
         </div>
+    </nav>
 
-        <script>
-            const signInToMicrosoft = () => {
-                window.location.href = "/azure_login";
-            };
+    <!-- Main Container for Microsoft Emails -->
+    <div class="container mt-4">
+        <h2>Microsoft Emails</h2>
+        <div class="mb-2">
+            <label>Application needs permissions to access your Outlook Mails.</label>
+            <button onclick="signInToMicrosoft()" class="btn btn-primary">Sign In with Microsoft</button>
+        </div>
 
-            const showEmailResponse = () => {
-                fetch("http://localhost/azure_user/v1/emails")
+        <!-- Dropdown to select email thread -->
+        <div class="mb-4">
+            <label for="emailThreadSelect" class="form-label">Select Email Thread</label>
+            <select id="emailThreadSelect" class="form-select" onchange="showEmailThread()">
+                <option value="">Choose an email thread...</option>
+            </select>
+        </div>
+
+        <!-- Detailed email thread view -->
+        <div id="emailThreadView" style="display: none; margin-top: 20px;">
+            <!-- Emails in a selected thread will be displayed here as cards -->
+        </div>
+
+        <!-- Generate Context Section -->
+        <div id="contextSection" class="mt-4" style="display: none;">
+            <button id="generateContextButton" class="btn btn-warning">Generate Context</button>
+            <textarea id="generatedContextTextArea" class="form-control mt-3" rows="5" placeholder="Generated context will appear here..." disabled></textarea>
+        </div>
+    </div>
+
+    <script>
+        const signInToMicrosoft = () => {
+            window.location.href = "/azure_login";
+        };
+
+        let emailThreads = [];
+
+        // Fetch email threads and populate the dropdown
+        const showEmailResponse = () => {
+            fetch("/azure_user/v1/email_threads")
                 .then(response => response.json())
                 .then(jsonResponse => {
-                    const emailSelect = document.getElementById("emailSelect");
-                    emailSelect.innerHTML = '<option value="">Choose an email...</option>'; // Clear previous options
-
+                    const emailThreadSelect = document.getElementById("emailThreadSelect");
+                    emailThreadSelect.innerHTML = '<option value="">Choose an email thread...</option>'; // Clear previous options
                     if ('data' in jsonResponse) {
                         jsonResponse.data.forEach((emailThread) => {
-                            emailThread.emails.forEach((email, index) => {
-                                const option = document.createElement('option');
-                                option.value = JSON.stringify(email);
-                                option.text = email.subject || 'No Subject';
-                                emailSelect.appendChild(option);
-                            });
+                            const option = document.createElement('option');
+                            option.value = emailThread.id; // Store thread ID to identify the thread later
+                            option.text = emailThread.title || 'No Subject'; // Display thread subject
+                            emailThreadSelect.appendChild(option);
                         });
+                        emailThreads = jsonResponse.data; // Store email threads globally
                     } else {
-                        emailSelect.innerHTML = '<option value="">Unable to fetch emails.</option>';
+                        emailThreadSelect.innerHTML = '<option value="">Unable to fetch email threads.</option>';
                     }
                 })
                 .catch(error => {
-                    console.error("Error fetching emails:", error);
-                    emailSelect.innerHTML = '<option value="">An error occurred while fetching emails. Please try again later.</option>';
+                    console.error("Error fetching email threads:", error);
+                    emailThreadSelect.innerHTML = '<option value="">An error occurred while fetching email threads. Please try again later.</option>';
                 });
-            };
+        };
 
-            const showEmailContent = () => {
-                const emailContentView = document.getElementById('emailContentView');
-                const selectedEmail = document.getElementById('emailSelect').value;
+        // Display emails within a selected thread in cards
+        const showEmailThread = () => {
+            const selectedThreadId = document.getElementById('emailThreadSelect').value;
+            const emailThreadView = document.getElementById('emailThreadView');
+            emailThreadView.innerHTML = ''; // Clear previous content
 
-                if (!selectedEmail) {
-                    emailContentView.style.display = 'none';
-                    return;
-                }
-
-                const email = JSON.parse(selectedEmail);
-
-                emailContentView.innerHTML = `
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title">${email.subject || 'No Subject'}</h5>
-                            <p class="card-subtitle mb-2 text-muted">From: ${email.sender_id || 'Unknown'}</p>
-                            <p class="card-subtitle mb-2 text-muted">Recipients: ${email.recipients.join(', ') || 'No Recipients'}</p>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">${email.body || 'No content available.'}</p>
-                        </div>
-                        <div class="card-footer text-muted">
-                            <small>Received: ${email.timestamp || 'No Date'}</small>
-                        </div>
-                    </div>
-                `;
-                emailContentView.style.display = 'block';
-            };
-
-            // Initialize tooltips and fetch emails when the page loads
-            document.addEventListener('DOMContentLoaded', function () {
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl)
-                });
-
-                // Fetch the emails
-                showEmailResponse();
-
-                // Check login status on page load
-                checkLoginStatus();
-            });
-
-            async function checkLoginStatus() {
-                try {
-                    const response = await fetch('/login_status', { method: 'GET' });
-                    const data = await response.json();
-                    if (data.logged_in) {
-                        document.getElementById('login-button').style.display = 'none';
-                        document.getElementById('logout-button').style.display = 'inline-block';
-                        document.getElementById('welcome-message').style.display = 'inline-block';
-                        document.getElementById('welcome-message').innerText = `Welcome, ${data.user_info.name || 'User'}!`;
-                    } else {
-                        document.getElementById('login-button').style.display = 'inline-block';
-                        document.getElementById('logout-button').style.display = 'none';
-                        document.getElementById('welcome-message').style.display = 'none';
-                    }
-                } catch (error) {
-                    console.error("Error checking login status:", error);
-                }
+            if (selectedThreadId === '') {
+                emailThreadView.style.display = 'none';
+                document.getElementById('contextSection').style.display = 'none';
+                return;
             }
 
-            // Logout functionality script
-            document.getElementById('logout-button').addEventListener('click', async function() {
-                try {
-                    const response = await fetch('/logout', { method: 'GET' });
-                    const data = await response.json();
-                    if (response.ok) {
-                        alert(data.message);
-                        window.location.href = "/";
+            fetch(`/azure_user/v1/email_threads/${selectedThreadId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.emails.length === 0) {
+                        emailThreadView.innerHTML = '<div class="alert alert-warning">No emails found for this thread.</div>';
                     } else {
-                        throw new Error(data.detail || "Logout failed");
+                        data.emails.forEach(email => {
+                            const emailCard = document.createElement('div');
+                            emailCard.classList.add('card', 'mb-3');
+                            emailCard.innerHTML = `
+                                <div class="card-header">
+                                    <h5 class="card-title">${email.subject || 'No Subject'}</h5>
+                                    <p class="card-subtitle mb-2 text-muted">From: ${email.sender_id || 'Unknown Sender'}</p>
+                                    <p class="card-subtitle mb-2 text-muted">Recipients: ${email.recipients.join(', ') || 'No Recipients'}</p>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">${email.body || 'No content available.'}</p>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    <small>Received: ${email.timestamp || 'No Date'}</small>
+                                </div>
+                            `;
+                            emailThreadView.appendChild(emailCard);
+                        });
                     }
-                } catch (error) {
-                    console.error("Logout failed:", error.message);
-                    alert("An error occurred: " + error.message);
-                }
-            });
-        </script>
 
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+                    emailThreadView.style.display = 'block';
+                    document.getElementById('contextSection').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error("Error fetching email thread:", error);
+                    emailThreadView.innerHTML = '<div class="alert alert-danger">An error occurred while fetching the email thread. Please try again later.</div>';
+                });
+        };
+
+        // Generate context based on the email thread
+        document.getElementById('generateContextButton').addEventListener('click', function () {
+            const selectedThreadId = document.getElementById('emailThreadSelect').value;
+
+            if (!selectedThreadId) {
+                alert('Please select an email thread first!');
+                return;
+            }
+
+            fetch(`/text_bison/v1/context_generator/${selectedThreadId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('generatedContextTextArea').value = data.response_msg || 'No context generated';
+                })
+                .catch(error => {
+                    console.error('Error generating context:', error);
+                    document.getElementById('generatedContextTextArea').value = 'An error occurred while generating context. Please try again.';
+                });
+        });
+
+        // Initialize tooltips and fetch emails when the page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Fetch the emails
+            showEmailResponse();
+
+            // Check login status on page load
+            checkLoginStatus();
+        });
+
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/login_status', { method: 'GET' });
+                const data = await response.json();
+                if (data.logged_in) {
+                    document.getElementById('login-button').style.display = 'none';
+                    document.getElementById('logout-button').style.display = 'inline-block';
+                    document.getElementById('welcome-message').style.display = 'inline-block';
+                    document.getElementById('welcome-message').innerText = `Welcome, ${data.user_info.name || 'User'}!`;
+                } else {
+                    document.getElementById('login-button').style.display = 'inline-block';
+                    document.getElementById('logout-button').style.display = 'none';
+                    document.getElementById('welcome-message').style.display = 'none';
+                }
+            } catch (error) {
+                console.error("Error checking login status:", error);
+            }
+        }
+
+        // Logout functionality script
+        document.getElementById('logout-button').addEventListener('click', async function () {
+            try {
+                const response = await fetch('/logout', { method: 'GET' });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    window.location.href = "/";
+                } else {
+                    throw new Error(data.detail || "Logout failed");
+                }
+            } catch (error) {
+                console.error("Logout failed:", error.message);
+                alert("An error occurred: " + error.message);
+            }
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>
