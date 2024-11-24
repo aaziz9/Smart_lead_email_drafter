@@ -8,7 +8,7 @@ from models.user_model import User
 from models.email_model import Email
 from models.email_thread_model import EmailThread
 from models.email_recipient_model import EmailRecipient
-from services.gcp_context_mail_service import get_emails_in_curr_thread
+from services.google_cloud_platform.gcp_context_mail_service import get_emails_in_curr_thread
 from request_schema.email_resource_schema import EmailSchema
 from request_schema.email_user_resource_schema import EmailUserSchema
 

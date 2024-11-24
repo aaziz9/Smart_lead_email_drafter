@@ -11,20 +11,18 @@ from starlette.config import Config
 
 from utils.logging_utils import logger_instance
 
-from routes.static_files_routes import static_files_router
-from routes.config_routes import config_routes
-from routes.local_context_mail_v1_routes import context_mail_router
+from routes.static_files.static_files_routes import static_files_router
+from routes.configuration.config_routes import config_routes
+from routes.local_app_data.local_context_mail_v1_routes import context_mail_router
 
-from routes.gcp_auth_routes import gcp_auth_router, config
-from routes.gcp_text_bison_routes import gcp_text_bison_router
-from routes.gcp_user_gmail_routes import gcp_user_email_router
+from routes.google_cloud_platform.gcp_auth_routes import gcp_auth_router
+from routes.google_cloud_platform.gcp_text_bison_routes import gcp_text_bison_router
+from routes.google_cloud_platform.gcp_user_gmail_routes import gcp_user_email_router
 
-from routes.azure_auth_routes import azure_auth_router
-from routes.azure_user_outlook_mail_routes import azure_user_outlook_mail_router
+from routes.microsoft_azure.azure_auth_routes import azure_auth_router
+from routes.microsoft_azure.azure_user_outlook_mail_routes import azure_user_outlook_mail_router
 
 from db_utils.database_init import Base, engine
-
-from models import user_model, email_thread_model, email_model, email_recipient_model
 
 from dotenv import load_dotenv
 

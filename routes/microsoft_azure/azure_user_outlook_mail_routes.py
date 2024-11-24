@@ -4,9 +4,8 @@ from fastapi import APIRouter
 from fastapi import Request
 from fastapi.responses import JSONResponse, HTMLResponse
 
-from services.azure_user_outlook_mail_service import transform_response_with_thread_info, \
+from services.microsoft_azure.azure_user_outlook_mail_service import transform_response_with_thread_info, \
     get_emails_in_a_thread_and_transform_response
-from services.azure_user_outlook_mail_service import encapsulate_thread_email_details_in_response
 
 azure_user_outlook_mail_router = APIRouter()
 

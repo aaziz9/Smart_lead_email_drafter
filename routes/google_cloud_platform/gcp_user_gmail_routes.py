@@ -3,7 +3,7 @@ import requests
 from fastapi import APIRouter, Depends, Request, HTTPException
 from fastapi.responses import JSONResponse
 
-from services.gcp_user_gmail_service import process_and_add_emails_content_to_response
+from services.google_cloud_platform.gcp_user_gmail_service import process_and_add_emails_content_to_response
 from utils.user_utils import get_current_user
 
 gcp_user_email_router = APIRouter()
