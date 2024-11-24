@@ -6,9 +6,9 @@ from fastapi.responses import JSONResponse
 
 from sqlalchemy.orm import Session
 
-from services.azure_user_outlook_mail_service import get_emails_in_a_thread_and_transform_response
-from services.text_bison_service import get_processed_text_by_text_bison
-from services.gcp_context_mail_service import get_emails_in_curr_thread
+from services.microsoft_azure.azure_user_outlook_mail_service import get_emails_in_a_thread_and_transform_response
+from services.google_cloud_platform.text_bison_service import get_processed_text_by_text_bison
+from services.google_cloud_platform.gcp_context_mail_service import get_emails_in_curr_thread
 from db_utils.database_init import get_db
 from utils.user_utils import get_current_user
 
