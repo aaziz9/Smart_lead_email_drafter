@@ -16,6 +16,10 @@
             padding: 10px; /* Optional: add some padding for better spacing */
             border-radius: 5px; /* Optional: rounded corners */
         }
+        /* Adjust the size of the generated context text area */
+        #generatedContextTextArea {
+            height: 300px; /* Increased height for better display */
+        }
     </style>
 </head>
 
@@ -26,7 +30,7 @@
             <!-- Left Side: Brand and Navigation Links -->
             <div class="d-flex align-items-center">
                 <a class="navbar-brand d-flex align-items-center" href="#">
-                    <img src="C:\Users\71589\Documents\Smart_lead_email_drafter\static\images\omantel_logo.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+                    <img src="/static/images/omantel_logo.png" alt="Logo" style="height: 40px; margin-right: 10px;">
                     <span class="ms-2">AI SMART LEAD</span>
                 </a>
                 <!-- Navigation Links -->
@@ -82,7 +86,7 @@
         <!-- Generate Context Section -->
         <div id="contextSection" class="mt-4" style="display: none;">
             <button id="generateContextButton" class="btn btn-warning">Generate Context</button>
-            <textarea id="generatedContextTextArea" class="form-control mt-3" rows="5" placeholder="Generated context will appear here..." disabled></textarea>
+            <textarea id="generatedContextTextArea" class="form-control mt-3" rows="10" placeholder="Generated context will appear here..." disabled></textarea>
         </div>
     </div>
 
@@ -165,7 +169,7 @@
                 });
         };
 
-        // Generate context based on the email thread
+        // Generate context based on the email thread (Azure Context)
         document.getElementById('generateContextButton').addEventListener('click', function () {
             const selectedThreadId = document.getElementById('emailThreadSelect').value;
 
@@ -174,14 +178,28 @@
                 return;
             }
 
-            fetch(`/text_bison/v1/context_generator/${selectedThreadId}`)
+            // Show a spinner during the request
+            const generateButton = document.getElementById('generateContextButton');
+            generateButton.disabled = true;
+            generateButton.innerText = 'Generating...';
+
+            fetch(`/text_bison/v1/azure_context_generator/${selectedThreadId}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('generatedContextTextArea').value = data.response_msg || 'No context generated';
+                    if (data && data.response_msg) {
+                        document.getElementById('generatedContextTextArea').value = data.response_msg;
+                    } else {
+                        document.getElementById('generatedContextTextArea').value = 'No context generated';
+                    }
                 })
                 .catch(error => {
                     console.error('Error generating context:', error);
                     document.getElementById('generatedContextTextArea').value = 'An error occurred while generating context. Please try again.';
+                })
+                .finally(() => {
+                    // Hide the spinner after the request
+                    generateButton.disabled = false;
+                    generateButton.innerText = 'Generate Context';
                 });
         });
 
@@ -240,4 +258,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-</html>
+</html> 

@@ -14,6 +14,15 @@ from utils.user_utils import get_current_user
 
 gcp_text_bison_router = APIRouter()
 
+# Helper function for logging purposes
+def prepare_debug_log_emails_in_thread(emails):
+    result_str = ""
+    for email in emails:
+        result_str += f'Email Subject: {email["subject"]}\n'
+        result_str += f'Email Body: {email["body"]}\n'
+        result_str += "============ End of email separator ============\n\n"
+    return result_str
+
 
 @gcp_text_bison_router.post("/get_processed_text", tags=["Draft Email"])
 async def get_processed_text(request: Request, user_info: dict = Depends(get_current_user)):
@@ -33,7 +42,6 @@ async def get_processed_text(request: Request, user_info: dict = Depends(get_cur
             raise HTTPException(status_code=400, detail="Invalid JSON body")
 
         # Process the JSON data as needed
-        # Example: Accessing data from the body
         processed_text = get_processed_text_by_text_bison(input_text=body["email_body"],
                                                           action=body["action"],
                                                           auth_token=token["access_token"],
@@ -57,16 +65,16 @@ async def get_emails_as_str_in_thread_context(request: Request,
     token = request.session.get('gcp_token')
 
     try:
+        # Fetch emails from the current thread from the database
         emails_in_curr_thread = get_emails_in_curr_thread(thread_id=email_thread_id, db_pointer=db)
 
-        result_str = ""
-        for email in emails_in_curr_thread["emails"]:
-            result_str += f'Email Subject: {email["subject"]}\n'
-            result_str += f'Email Body: {email["body"]}\n'
-            result_str += "============ End of email separator ============\n\n"
+        # Prepare a string to represent all the emails in the thread
+        result_str = prepare_debug_log_emails_in_thread(emails_in_curr_thread["emails"])
 
-        # return result_str
+        # Log result for debugging purposes
+        print("Prepared input for GCP Bison:", result_str)
 
+        # Call the GCP Bison API to process the emails and generate a draft response
         processed_text = get_processed_text_by_text_bison(input_text=result_str,
                                                           action="[CONTEXT_BASED_EMAIL_DRAFTER]",
                                                           auth_token=token["access_token"],
@@ -85,24 +93,23 @@ async def get_azure_emails_as_str_in_thread_context(request: Request,
     """
     Your custom API endpoint to fetch results based on a context which is a collection of emails.
     :param email_thread_id: The ID of the email conversation thread.
-    :param db: Pointer referring to the Database.
     :param user_info: Contains user information fetched from the GCP ID token.
     :param request: Request object received from the client.
     """
     token = request.session.get('gcp_token')
 
     try:
+        # Fetch emails from Azure Outlook using the Azure service
         emails_in_curr_thread = get_emails_in_a_thread_and_transform_response(access_token=token,
                                                                               email_thread_id=email_thread_id)
 
-        result_str = ""
-        for email in emails_in_curr_thread:
-            result_str += f'Email Subject: {email["subject"]}\n'
-            result_str += f'Email Body: {email["body"]}\n'
-            result_str += "============ End of email separator ============\n\n"
+        # Prepare a string to represent all the emails in the thread
+        result_str = prepare_debug_log_emails_in_thread(emails_in_curr_thread)
 
-        # return result_str
+        # Log result for debugging purposes
+        print("Prepared input for GCP Bison:", result_str)
 
+        # Call the GCP Bison API to process the emails and generate a draft response
         processed_text = get_processed_text_by_text_bison(input_text=result_str,
                                                           action="[CONTEXT_BASED_EMAIL_DRAFTER]",
                                                           auth_token=token["access_token"],
