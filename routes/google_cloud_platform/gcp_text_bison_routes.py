@@ -97,10 +97,11 @@ async def get_azure_emails_as_str_in_thread_context(request: Request,
     :param request: Request object received from the client.
     """
     token = request.session.get('gcp_token')
+    azure_token = request.cookies.get("azure_access_token", None)
 
     try:
         # Fetch emails from Azure Outlook using the Azure service
-        emails_in_curr_thread = get_emails_in_a_thread_and_transform_response(access_token=token,
+        emails_in_curr_thread = get_emails_in_a_thread_and_transform_response(access_token=azure_token,
                                                                               email_thread_id=email_thread_id)
 
         # Prepare a string to represent all the emails in the thread
